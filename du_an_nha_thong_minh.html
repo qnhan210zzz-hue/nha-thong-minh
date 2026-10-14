@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏠 Sơ Đồ Đấu Dây — Nhà Thông Minh 2 Board</title>
+<style>
+/* ═══ THEME ═══ */
+:root{
+  --bg:#0f172a; --text:#e2e8f0; --card:#1e293b; --border:#475569; --muted:#94a3b8;
+  --accent:#7c3aed; --accent2:#2563eb; --danger:#ef4444; --ok:#22c55e; --warn:#eab308;
+  --w5v:#ef4444; --w3v3:#f97316; --wgnd:#94a3b8; --wsig:#3b82f6; --wpwm:#eab308;
+  --wi2c:#22c55e; --wana:#c2703d; --wi2s:#a855f7; --wspi:#e2e8f0; --wac:#f43f5e;
+  --shadow:0 8px 24px rgba(0,0,0,.35);
+}
+[data-theme="light"]{
+  --bg:#f1f5f9; --text:#0f172a; --card:#ffffff; --border:#cbd5e1; --muted:#64748b;
+  --wspi:#475569; --wgnd:#334155; --shadow:0 8px 24px rgba(15,23,42,.12);
+}
+*{margin:0; padding:0; box-sizing:border-box}
+body{background:var(--bg); color:var(--text); font-family:'Segoe UI',Roboto,Arial,sans-serif; line-height:1.55; min-height:100vh}
+
+/* ═══ HEADER ═══ */
+.main-header{
+  position:relative; text-align:center; padding:30px 16px 26px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff;
+  border-radius:0 0 18px 18px; box-shadow:var(--shadow);
+}
+.main-header h1{font-size:1.9rem; letter-spacing:1px; text-transform:uppercase}
+.main-header .subtitle{opacity:.92; margin-top:6px; font-size:1.02rem}
+.header-actions{position:absolute; top:14px; right:14px; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end}
+.btn{
+  background:rgba(255,255,255,.16); color:#fff; border:1px solid rgba(255,255,255,.4);
+  padding:8px 14px; border-radius:10px; cursor:pointer; font-size:.9rem; font-family:inherit; transition:background .2s;
+}
+.btn:hover{background:rgba(255,255,255,.3)}
+.btn-grad{background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:16px 12px 4px}
+.tab-btn{
+  background:var(--card); color:var(--muted); border:1px solid var(--border);
+  padding:10px 16px; border-radius:12px; cursor:pointer; font-size:.95rem; font-family:inherit; transition:all .2s;
+}
+.tab-btn:hover{color:var(--text); border-color:var(--accent)}
+.tab-btn.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; border-color:transparent;
+  box-shadow:0 4px 14px rgba(124,58,237,.4);
+}
+.tab-panel{display:none; padding:18px 14px 40px; max-width:1460px; margin:0 auto}
+.tab-panel.active{display:block; animation:fadeIn .35s ease}
+@keyframes fadeIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+.panel-title{font-size:1.5rem; margin-bottom:6px}
+.panel-desc{color:var(--muted); margin-bottom:18px}
+
+/* ═══ CARDS / STATS ═══ */
+.stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:14px; margin:18px 0}
+.stat-card{
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:16px; text-align:center; box-shadow:var(--shadow);
+}
+.stat-card .num{font-size:1.7rem; font-weight:700; background:linear-gradient(135deg,var(--accent),var(--accent2)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent}
+.stat-card .lbl{color:var(--muted); font-size:.9rem; margin-top:2px}
+.card{
+  background:var(--card); border:1px solid var(--border); border-left:4px solid var(--accent);
+  border-radius:12px; padding:16px 18px; margin:16px 0; box-shadow:var(--shadow);
+}
+.card h3{margin-bottom:8px}
+.note{
+  background:var(--card); border:1px solid var(--warn); border-radius:12px;
+  padding:12px 16px; margin:12px 0; font-size:.95rem;
+}
+.note.danger{border-color:var(--danger)}
+.note.ok{border-color:var(--ok)}
+.note b{color:var(--warn)}
+.note.danger b{color:var(--danger)}
+.note.ok b{color:var(--ok)}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+
+/* ═══ TABLE ═══ */
+.table-wrap{overflow-x:auto; border-radius:12px; border:1px solid var(--border)}
+table{width:100%; border-collapse:collapse; font-size:.93rem}
+thead th{
+  background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff;
+  padding:10px 12px; text-align:left; white-space:nowrap; cursor:pointer; user-select:none;
+}
+thead th:hover{filter:brightness(1.12)}
+tbody td{padding:9px 12px; border-top:1px solid var(--border)}
+tbody tr:hover{background:rgba(124,58,237,.12)}
+.badge{display:inline-block; padding:3px 10px; border-radius:999px; font-size:.8rem; font-weight:600; color:#fff}
+.b-Input{background:#0891b2}.b-Output{background:#2563eb}.b-PWM{background:#ca8a04}
+.b-I2C{background:#16a34a}.b-SPI{background:#64748b}.b-I2S{background:#9333ea}
+.b-Analog{background:#b45309}.b-Onboard{background:#475569}.b-Digital{background:#0284c7}.b-Power{background:#dc2626}
+
+/* ═══ SVG ═══ */
+.svg-toolbar{display:flex; gap:8px; margin:10px 0; flex-wrap:wrap}
+.svg-viewport{
+  overflow:auto; max-height:78vh; border:1px solid var(--border); border-radius:12px;
+  background:var(--card); box-shadow:var(--shadow);
+}
+.svg-viewport svg{display:block; transform-origin:0 0; transition:transform .25s ease; max-width:none}
+.wire{fill:none; stroke-width:2.6; stroke-linejoin:round; stroke-linecap:round; transition:opacity .2s, stroke-width .2s}
+.comp{cursor:pointer; transition:filter .2s, opacity .2s}
+.comp:hover{filter:brightness(1.25)}
+svg.focused .wire{opacity:.07}
+svg.focused .wire.hl{opacity:1; stroke-width:4.5}
+svg.focused .comp{opacity:.22}
+svg.focused .comp.hl{opacity:1}
+#tooltip{
+  position:fixed; z-index:99; pointer-events:none; background:#0b1120; color:#e2e8f0;
+  border:1px solid var(--accent); border-radius:10px; padding:8px 12px; font-size:.85rem;
+  max-width:280px; display:none; box-shadow:var(--shadow);
+}
+
+/* ═══ STEPS / CHECKLIST / ACCORDION / FILTERS ═══ */
+.step{display:flex; gap:14px; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin:12px 0; align-items:flex-start}
+.step-num{
+  flex:0 0 40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-weight:700; font-size:1.05rem;
+}
+.step-body{flex:1}
+.step-body h4{margin-bottom:4px}
+.step-body p{color:var(--muted); font-size:.93rem}
+.step-check{margin-top:8px; font-size:.9rem; color:var(--muted)}
+.step svg.mini{margin-top:10px; border:1px solid var(--border); border-radius:8px; background:var(--bg)}
+.chk-group{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; margin:12px 0}
+.chk-group h4{margin-bottom:8px}
+.chk-item{display:flex; gap:10px; align-items:flex-start; padding:6px 0; font-size:.95rem; cursor:pointer}
+.chk-item input{width:18px; height:18px; accent-color:var(--accent); cursor:pointer; margin-top:2px}
+.chk-item input:checked + span{color:var(--muted); text-decoration:line-through}
+.prog{background:var(--card); border:1px solid var(--border); border-radius:999px; height:22px; overflow:hidden; margin:8px 0 4px}
+.prog-bar{height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .3s ease}
+.acc-item{background:var(--card); border:1px solid var(--border); border-radius:12px; margin:10px 0; overflow:hidden}
+.acc-head{
+  width:100%; text-align:left; background:none; border:none; color:var(--text); font-family:inherit;
+  font-size:1rem; font-weight:600; padding:14px 16px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:10px;
+}
+.acc-head:hover{background:rgba(124,58,237,.1)}
+.acc-head .arrow{transition:transform .25s; color:var(--muted)}
+.acc-item.open .acc-head .arrow{transform:rotate(90deg)}
+.acc-body{display:none; padding:0 16px 14px; font-size:.93rem}
+.acc-item.open .acc-body{display:block; animation:fadeIn .3s ease}
+.acc-body b{color:var(--accent2)}
+[data-theme="light"] .acc-body b{color:var(--accent)}
+.filters{display:flex; gap:10px; flex-wrap:wrap; margin:12px 0}
+.filters input,.filters select{
+  background:var(--card); color:var(--text); border:1px solid var(--border);
+  border-radius:10px; padding:9px 12px; font-size:.92rem; font-family:inherit;
+}
+.filters input{flex:1; min-width:180px}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width:600px){
+  .main-header h1{font-size:1.3rem}
+  .grid2{grid-template-columns:1fr}
+  .tab-btn{font-size:.85rem; padding:8px 10px}
+  .panel-title{font-size:1.25rem}
+  body{font-size:15px}
+}
+
+/* ═══ PRINT — A3 ngang ═══ */
+@media print{
+  @page{size:A3 landscape; margin:10mm}
+  .tabs,.header-actions,.svg-toolbar,#tooltip,.no-print{display:none !important}
+  .tab-panel{display:block !important; padding:0; max-width:none; page-break-after:always; break-after:page}
+  .main-header{border-radius:0; box-shadow:none; padding:12px}
+  .svg-viewport{max-height:none; overflow:visible; box-shadow:none}
+  .svg-viewport svg{transform:none !important; width:100%; height:auto; max-width:100%}
+  #svgB1{max-height:250mm; width:auto; max-width:100%; margin:0 auto}
+  #svgB2{max-height:250mm; width:auto; max-width:100%; margin:0 auto}
+  .card,.step,.chk-group,.acc-item,.stat-card,.note{box-shadow:none; break-inside:avoid}
+  .acc-body{display:block !important}
+  body{background:#fff; color:#0f172a}
+}
+</style>
+</head>
+<body>
+<div id="tooltip"></div>
+
+<!-- ═══ HEADER ═══ -->
+<header class="main-header">
+  <h1>🏠 Nhà Thông Minh 2 Board</h1>
+  <p class="subtitle">ESP32 DevKit V1 + ESP32-S3 N16R8 XiaoZhi AI · Sơ đồ đấu dây đầy đủ</p>
+  <div class="header-actions">
+    <button class="btn" id="themeBtn" onclick="toggleTheme()">🌙 Tối</button>
+    <button class="btn" onclick="window.print()">🖨️ In sơ đồ (A3)</button>
+  </div>
+</header>
+
+<!-- ═══ TABS ═══ -->
+<nav class="tabs">
+  <button class="tab-btn active" onclick="showTab('tab1',this)">📊 Tổng quan</button>
+  <button class="tab-btn" onclick="showTab('tab2',this)">📟 Board 1 — ESP32</button>
+  <button class="tab-btn" onclick="showTab('tab3',this)">🎤 Board 2 — ESP32-S3</button>
+  <button class="tab-btn" onclick="showTab('tab4',this)">🔌 Bảng kết nối</button>
+  <button class="tab-btn" onclick="showTab('tab5',this)">🛠️ Lắp ráp</button>
+  <button class="tab-btn" onclick="showTab('tab6',this)">✅ Checklist</button>
+  <button class="tab-btn" onclick="showTab('tab7',this)">🚨 Sửa lỗi</button>
+  <button class="tab-btn" onclick="showTab('tab8',this)">⚡ Buzzer &amp; ngưỡng</button>
+</nav>
+
+<!-- ══════════════════ TAB 1: TỔNG QUAN ══════════════════ -->
+<section class="tab-panel active" id="tab1">
+  <h2 class="panel-title">📊 Tổng Quan Hệ Thống</h2>
+  <p class="panel-desc">Hệ thống gồm hai board: Board 1 đọc cảm biến, điều khiển thiết bị và gửi dữ liệu lên Blynk Cloud; Board 2 chạy trợ lý giọng nói XiaoZhi AI và gửi lệnh tới Board 1 qua MCP WebSocket. Cả hai dùng Wi-Fi 2,4 GHz. Khi mất mạng, các chức năng tự động cục bộ của Board 1 vẫn được firmware xử lý; ứng dụng Blynk và điều khiển giọng nói qua dịch vụ mạng có thể không hoạt động.</p>
+
+  <div class="stat-grid">
+    <div class="stat-card"><div class="num">33</div><div class="lbl">🧩 Nhóm linh kiện</div></div>
+    <div class="stat-card"><div class="num">2</div><div class="lbl">📟 Board mạch</div></div>
+    <div class="stat-card"><div class="num">31</div><div class="lbl">🔌 Kết nối GPIO</div></div>
+    <div class="stat-card"><div class="num">2</div><div class="lbl">🔋 Cáp USB cắt dây</div></div>
+  </div>
+
+  <div class="card">
+    <h3>🔗 Sơ đồ khối kết nối</h3>
+    <div class="svg-viewport" style="max-height:none">
+    <svg id="svgOv" viewBox="0 0 1200 420" width="1200" role="img" aria-label="Sơ đồ khối tổng quan hệ thống">
+      <defs>
+        <linearGradient id="gOv" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#2563eb"/>
+        </linearGradient>
+        <marker id="arrOv" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+        </marker>
+        <style>
+          .tx{fill:var(--text,#e2e8f0);font-family:'Segoe UI',Roboto,Arial,sans-serif}
+          .ts{fill:var(--muted,#94a3b8);font-family:'Segoe UI',Roboto,Arial,sans-serif}
+          .cbox{fill:var(--card,#1e293b);stroke:var(--border,#475569);stroke-width:2}
+          .wsig{stroke:var(--wsig,#3b82f6)} .wi2s{stroke:var(--wi2s,#a855f7)} .wi2c{stroke:var(--wi2c,#22c55e)}
+        </style>
+      </defs>
+      <!-- Board 1 -->
+      <g class="comp" data-tip="Board 1: đọc 6 cảm biến, điều khiển 2 servo, relay quạt, 3 LED, còi, LCD">
+        <rect x="60" y="120" width="300" height="170" rx="14" class="cbox"/>
+        <rect x="60" y="120" width="300" height="170" rx="14" fill="url(#gOv)" opacity="0.15"/>
+        <text x="210" y="160" class="tx" font-size="17" font-weight="700" text-anchor="middle">📟 BOARD 1</text>
+        <text x="210" y="185" class="tx" font-size="13" text-anchor="middle">ESP32 DevKit V1</text>
+        <text x="210" y="212" class="ts" font-size="12" text-anchor="middle">6 cảm biến · 2 servo · relay quạt</text>
+        <text x="210" y="232" class="ts" font-size="12" text-anchor="middle">3 LED · còi · LCD · nút khẩn cấp</text>
+        <text x="210" y="262" class="ts" font-size="12" text-anchor="middle">Firmware v11.6 (đã bỏ DFPlayer)</text>
+      </g>
+      <!-- Board 2 -->
+      <g class="comp" data-tip="Board 2: trợ lý giọng nói XiaoZhi — nghe lệnh, trả lời, ra lệnh cho Board 1 qua MCP">
+        <rect x="840" y="120" width="300" height="170" rx="14" class="cbox"/>
+        <rect x="840" y="120" width="300" height="170" rx="14" fill="url(#gOv)" opacity="0.15"/>
+        <text x="990" y="160" class="tx" font-size="17" font-weight="700" text-anchor="middle">🎤 BOARD 2</text>
+        <text x="990" y="185" class="tx" font-size="13" text-anchor="middle">ESP32-S3 N16R8 · XiaoZhi AI</text>
+        <text x="990" y="212" class="ts" font-size="12" text-anchor="middle">Mic INMP441 · Amp MAX98357A</text>
+        <text x="990" y="232" class="ts" font-size="12" text-anchor="middle">Loa 4Ω/3W · TFT 1.8" ST7735</text>
+        <text x="990" y="262" class="ts" font-size="12" text-anchor="middle">LED RGB WS2812 · nút BOOT</text>
+      </g>
+      <!-- Router -->
+      <g class="comp" data-tip="Router WiFi nhà bạn — cả 2 board kết nối vào đây">
+        <rect x="500" y="40" width="200" height="80" rx="14" class="cbox"/>
+        <text x="600" y="72" class="tx" font-size="15" font-weight="700" text-anchor="middle">📶 ROUTER WiFi</text>
+        <text x="600" y="96" class="ts" font-size="12" text-anchor="middle">2.4GHz — bắt buộc</text>
+      </g>
+      <!-- Cloud -->
+      <g class="comp" data-tip="Blynk Cloud: điều khiển &amp; giám sát từ xa qua app điện thoại">
+        <rect x="500" y="300" width="200" height="80" rx="40" class="cbox"/>
+        <text x="600" y="332" class="tx" font-size="15" font-weight="700" text-anchor="middle">☁️ BLYNK CLOUD</text>
+        <text x="600" y="356" class="ts" font-size="12" text-anchor="middle">App điện thoại 📱</text>
+      </g>
+      <!-- Liên kết -->
+      <path class="wire wsig" d="M300 120 L300 80 L500 80" marker-end="url(#arrOv)"/>
+      <path class="wire wsig" d="M900 120 L900 80 L700 80" marker-end="url(#arrOv)"/>
+      <path class="wire wi2c" d="M560 120 L560 300" marker-end="url(#arrOv)"/>
+      <path class="wire wi2c" d="M640 300 L640 120" marker-end="url(#arrOv)"/>
+      <path class="wire wi2s" d="M360 205 L840 205" stroke-dasharray="8 6" marker-end="url(#arrOv)"/>
+      <text class="ts" x="600" y="195" font-size="12" text-anchor="middle">MCP WebSocket — ra lệnh giọng nói</text>
+      <text class="ts" x="392" y="72" font-size="12">WiFi</text>
+      <text class="ts" x="742" y="72" font-size="12">WiFi</text>
+      <text class="ts" x="575" y="215" font-size="12">Blynk</text>
+    </svg>
+    </div>
+  </div>
+
+  <div class="card"><h3>🛡️ Sơ đồ ưu tiên xử lý (an toàn trước)</h3><div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:8px 0"><span style="background:#ef4444;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem">FIRE</span><span style="opacity:.7">›</span><span style="background:#f97316;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem">GAS</span><span style="opacity:.7">›</span><span style="background:#dc2626;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem">EMERGENCY</span><span style="opacity:.7">›</span><span style="background:#3b82f6;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem">RAIN</span><span style="opacity:.7">›</span><span style="background:#7c3aed;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem">MANUAL</span><span style="opacity:.7">›</span><span style="background:#06b6d4;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem">AUTO</span><span style="opacity:.7">›</span><span style="background:#22c55e;color:#fff;padding:8px 14px;border-radius:10px;font-weight:700;font-size:.85rem">NORMAL</span></div><p class="panel-desc">Khi nhiều sự kiện xảy ra cùng lúc, Board 1 xử lý theo thứ tự từ trái sang phải: cháy trước, rồi gas, khẩn cấp, mưa, điều khiển tay, tự động, cuối cùng là bình thường.</p></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>📟 Board 1 — tóm tắt GPIO</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>GPIO</th><th>Dùng cho</th></tr></thead>
+          <tbody>
+            <tr><td>4 · 5 · 18 · 19</td><td>DHT11 · 3 LED</td></tr>
+            <tr><td>14 · 26</td><td>Còi · Relay quạt</td></tr>
+            <tr><td>21 · 22</td><td>LCD I2C (SDA/SCL)</td></tr>
+            <tr><td>23 · 27</td><td>Servo cửa · Servo phơi</td></tr>
+            <tr><td>25</td><td>Nút khẩn cấp</td></tr>
+            <tr><td>32 · 35</td><td>HC-SR04 (TRIG/ECHO)</td></tr>
+            <tr><td>33 · 34 · 36 · 39</td><td>MQ-2 · Lửa · Mưa · LDR</td></tr>
+            <tr><td>16 · 17</td><td>— Trống (đã bỏ DFPlayer) —</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>🎤 Board 2 — tóm tắt GPIO</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>GPIO</th><th>Dùng cho</th></tr></thead>
+          <tbody>
+            <tr><td>4 · 5 · 6</td><td>Mic INMP441 (I2S)</td></tr>
+            <tr><td>15 · 16 · 17</td><td>Amp MAX98357A (I2S)</td></tr>
+            <tr><td>8 · 9 · 10</td><td>TFT CS · RST · DC</td></tr>
+            <tr><td>11 · 12 · 18</td><td>TFT MOSI · SCK · BLK</td></tr>
+            <tr><td>48</td><td>LED RGB WS2812 (onboard)</td></tr>
+            <tr><td>0</td><td>Nút BOOT (onboard)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🔋 Cấp nguồn bằng 2 cáp USB cắt dây</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Cáp</th><th>Cấp cho</th><th>Dòng đỉnh ước tính</th><th>Đầu sạc nên dùng</th></tr></thead>
+      <tbody>
+        <tr><td><b>#1</b></td><td>Board 1: VIN, 2 servo, relay, HC-SR04, MQ-2 (sưởi ~150mA), LCD</td><td>khoảng 1,2–1,8A (servo chạy cùng lúc)</td><td>≥2A, cáp ngắn dây dày</td></tr>
+        <tr><td><b>#2</b></td><td>Amp MAX98357A lấy +5 V riêng; ESP32-S3 cấp qua cổng USB-C, trừ khi tài liệu đúng phiên bản board xác nhận đầu vào khác</td><td>Phụ thuộc âm lượng và loa</td><td>Đủ dòng, ổn định</td></tr>
+      </tbody></table></div>
+    <ul>
+      <li>Dây <b>đỏ = +5V</b>, <b>đen = GND</b>; dây trắng và xanh lá (D+/D−) cắt bỏ, bọc cách điện từng dây.</li>
+      <li>Nối GND theo sơ đồ để tín hiệu có chung mốc tham chiếu; <b>không</b> nối trực tiếp hai đường +5 V độc lập với nhau.</li>
+      <li>Đo điện áp ngay tại tải bằng đồng hồ trước khi cắm board; đặt tụ 470 µF sát mỗi servo, đúng cực. Không vượt giới hạn dòng của cáp, đầu sạc hoặc module.</li>
+      <li>Số dòng điện chỉ là ước tính từ thông số thường gặp của linh kiện, hãy đo thực tế nếu sạc nóng hoặc board reset.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>☁️ Bảng Blynk Virtual Pins của Board 1</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Virtual Pin</th><th>Dữ liệu</th><th>Kiểu</th><th>Giá trị / ý nghĩa</th></tr></thead>
+      <tbody>
+        <tr><td>V0</td><td>Nhiệt độ</td><td>Double</td><td>Độ C</td></tr>
+        <tr><td>V1</td><td>Độ ẩm</td><td>Double</td><td>Phần trăm</td></tr>
+        <tr><td>V2</td><td>Ánh sáng</td><td>Integer</td><td>0 = tối; 100 = sáng</td></tr>
+        <tr><td>V3</td><td>Giá trị thô MQ-2</td><td>Integer</td><td>0 đến 4095; chỉ gửi khi dữ liệu hợp lệ</td></tr>
+        <tr><td>V4</td><td>Mức cảnh báo</td><td>Integer</td><td>0 = bình thường; 150 = gas; 255 = lửa</td></tr>
+        <tr><td>V6</td><td>Trạng thái quạt</td><td>Integer</td><td>0 = tắt; 1 = bật</td></tr>
+        <tr><td>V7</td><td>Trạng thái cửa</td><td>Integer</td><td>0 = đóng; 1 = mở</td></tr>
+        <tr><td>V8</td><td>Chế độ đèn</td><td>Integer</td><td>0 đến 4</td></tr>
+        <tr><td>V9</td><td>Thông báo trạng thái</td><td>String</td><td>Văn bản trạng thái do firmware gửi</td></tr>
+        <tr><td>V10</td><td>Yêu cầu tự kiểm tra</td><td>Integer</td><td>0 = không yêu cầu; 1 = yêu cầu</td></tr>
+        <tr><td>V11</td><td>Trạng thái mưa</td><td>Integer</td><td>0 = khô; 1 = mưa</td></tr>
+        <tr><td>V12</td><td>Trạng thái giàn phơi</td><td>Integer</td><td>0 = thu vào; 1 = phơi ra</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+  <div class="card">
+    <h3>⚙️ Ngưỡng tự động cần nhớ</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Chức năng</th><th>Ngưỡng trong firmware</th><th>Hành động / ghi chú</th></tr></thead>
+      <tbody>
+        <tr><td>Quạt bật theo nhiệt độ</td><td>Từ 35,0 °C trở lên</td><td>Có vùng trễ để tránh bật tắt liên tục</td></tr>
+        <tr><td>Quạt tắt theo nhiệt độ</td><td>33,0 °C trở xuống, duy trì 10 giây</td><td>Không tắt ngay khi nhiệt độ vừa giảm qua ngưỡng</td></tr>
+        <tr><td>Gas cảnh báo</td><td>Ngưỡng động: baseline + 400; ngưỡng tĩnh dự phòng 1000</td><td>Ngưỡng thực tế phụ thuộc hiệu chuẩn MQ-2</td></tr>
+        <tr><td>Gas nguy hiểm</td><td>Ngưỡng động: baseline + 800; ngưỡng tĩnh dự phòng 1350</td><td>Firmware ưu tiên xử lý mức nguy hiểm</td></tr>
+        <tr><td>MQ-2 khởi động</td><td>120 giây</td><td>Không coi số đo giai đoạn làm nóng là số đo ổn định</td></tr>
+        <tr><td>Cửa tự đóng bình thường</td><td>120 giây sau khi mở</td><td>Thời gian có thể khác khi mở cửa trong tình huống gas</td></tr>
+        <tr><td>Giàn phơi khi mưa</td><td>Mưa ướt xác nhận 3 giây; khô xác nhận 10 giây</td><td>Có khoảng hủy ướt ngắn 800 mili giây để lọc nhiễu</td></tr>
+        <tr><td>Xóa cảnh báo lửa</td><td>Phải xác nhận hết lửa trong 5 giây</td><td>Không phải chứng nhận thiết bị báo cháy an toàn</td></tr>
+        <tr><td>Hết thời gian điều khiển tay</td><td>60 giây</td><td>Thiết bị được trả về cơ chế tự động theo logic firmware</td></tr>
+        <tr><td>Giới hạn bật relay quạt</td><td>Tối đa 120 giây mỗi khoảng điều khiển được quy định</td><td>Relay chỉ đóng/ngắt quạt 5 V DC trong bản thiết kế này</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="note danger">
+    <b>⛔ GHI CHÚ QUAN TRỌNG:</b> Relay GPIO26 điều khiển quạt 5V DC qua tiếp điểm COM/NO — KHÔNG đấu điện lưới 220 V vào sơ đồ này. Đấu phía tải theo thiết kế 5 V DC: COM → +5 V; NO → cực dương quạt; cực âm quạt → GND. Chân ECHO HC-SR04 phải qua cầu chia áp 1 kΩ nối tiếp và 2 kΩ xuống GND trước GPIO35. Chân AO MQ-2 phải qua cầu chia áp 10 kΩ nối tiếp và 20 kΩ xuống GND trước GPIO33. Không nối chung hai đường +5 V của hai bộ nguồn; chỉ nối chung GND khi sơ đồ yêu cầu.
+  </div>
+  <div class="note ok">
+    <b>🧭 CÁCH DÙNG TÀI LIỆU:</b> Tab 2 và Tab 3 là sơ đồ từng board; Tab 4 tra cứu dây; Tab 5 hướng dẫn lắp ráp; Tab 6 kiểm tra sau lắp; Tab 7 xử lý lỗi; Tab 8 giải thích còi, ngưỡng và thứ tự ưu tiên. Các giá trị cần xác nhận theo đúng phiên bản module thực tế trước khi cấp điện.
+  </div>
+
+</section>
+
+<!-- ══════════════════ TAB 2: BOARD 1 ══════════════════ -->
+<section class="tab-panel" id="tab2">
+  <h2 class="panel-title">📟 Board 1 — ESP32 DevKit V1 (Cảm biến &amp; Chấp hành)</h2>
+  <p class="panel-desc">Di chuột lên linh kiện để xem chú thích · Click vào linh kiện/dây để tô sáng toàn bộ kết nối liên quan (click lần nữa để bỏ) · Dùng nút phóng to hoặc cuộn trong khung.</p>
+
+  <div class="svg-toolbar no-print">
+    <button class="btn btn-grad" onclick="zoomSvg('svgB1',1.2)">🔍 Phóng to</button>
+    <button class="btn btn-grad" onclick="zoomSvg('svgB1',0.8)">🔎 Thu nhỏ</button>
+    <button class="btn btn-grad" onclick="zoomReset('svgB1')">↺ Đặt lại</button>
+    <button class="btn btn-grad" onclick="downloadSvg('svgB1','so-do-board1-esp32.svg')">⬇️ Tải SVG</button>
+    <button class="btn btn-grad" onclick="window.print()">🖨️ In sơ đồ</button>
+  </div>
+
+  <div class="svg-viewport">
+  <svg id="svgB1" viewBox="0 0 1700 1836" width="1700" role="img" aria-label="Sơ đồ đấu dây Board 1 ESP32 DevKit V1"><defs><linearGradient id="gsvgB1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs><style>.tx{fill:var(--text,#e2e8f0);font-family:Segoe UI,Roboto,Arial,sans-serif}.ts{fill:var(--muted,#94a3b8);font-family:Segoe UI,Roboto,Arial,sans-serif}.cbox{fill:var(--card,#1e293b);stroke:var(--border,#475569);stroke-width:2}.wsig{stroke:var(--wsig,#3b82f6)}.wpwm{stroke:var(--wpwm,#eab308)}.wi2c{stroke:var(--wi2c,#22c55e)}.wi2s{stroke:var(--wi2s,#a855f7)}.wspi{stroke:var(--wspi,#e2e8f0)}.wana{stroke:var(--wana,#c2703d)}.wac{stroke:var(--wac,#f43f5e)}.w5v{stroke:var(--w5v,#ef4444)}.w3v3{stroke:var(--w3v3,#f97316)}.wgnd{stroke:var(--wgnd,#94a3b8)}</style><path class="wire w5v" data-dev="power5" d="M30 1616H1670" style="stroke-width:4"/><text x="150" y="1610" class="tx" font-size="11" font-weight="700" style="fill:var(--w5v,#ef4444)">RAY 5V</text><path class="wire w5v" data-dev="power5" d="M30 108V1616" style="stroke-width:3"/><circle cx="30" cy="1616" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="30" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w5v,#ef4444)">5V</text><path class="wire w5v" data-dev="power5" d="M1670 108V1616" style="stroke-width:3"/><circle cx="1670" cy="1616" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1670" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w5v,#ef4444)">5V</text><path class="wire w3v3" data-dev="power3v3" d="M54 1640H1646" style="stroke-width:4"/><text x="150" y="1634" class="tx" font-size="11" font-weight="700" style="fill:var(--w3v3,#f97316)">RAY 3V3</text><path class="wire w3v3" data-dev="power3v3" d="M54 108V1640" style="stroke-width:3"/><circle cx="54" cy="1640" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="54" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w3v3,#f97316)">3V3</text><path class="wire w3v3" data-dev="power3v3" d="M1646 108V1640" style="stroke-width:3"/><circle cx="1646" cy="1640" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1646" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w3v3,#f97316)">3V3</text><path class="wire wgnd" data-dev="powergnd" d="M78 1664H1622" style="stroke-width:4"/><text x="150" y="1658" class="tx" font-size="11" font-weight="700" style="fill:var(--wgnd,#94a3b8)">RAY GND</text><path class="wire wgnd" data-dev="powergnd" d="M78 108V1664" style="stroke-width:3"/><circle cx="78" cy="1664" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="78" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--wgnd,#94a3b8)">GND</text><path class="wire wgnd" data-dev="powergnd" d="M1622 108V1664" style="stroke-width:3"/><circle cx="1622" cy="1664" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1622" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--wgnd,#94a3b8)">GND</text><path class="wire w5v" data-dev="sr04" d="M120 183H30" style="stroke-width:2.4"/><circle cx="30" cy="183" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="sr04" d="M120 209H78" style="stroke-width:2.4"/><circle cx="78" cy="209" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w5v" data-dev="mq2" d="M120 393H30" style="stroke-width:2.4"/><circle cx="30" cy="393" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="mq2" d="M120 419H78" style="stroke-width:2.4"/><circle cx="78" cy="419" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w3v3" data-dev="rain" d="M120 577H54" style="stroke-width:2.4"/><circle cx="54" cy="577" r="3.5" fill="var(--w3v3,#f97316)"/><path class="wire wgnd" data-dev="rain" d="M120 603H78" style="stroke-width:2.4"/><circle cx="78" cy="603" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wgnd" data-dev="btn" d="M120 761H78" style="stroke-width:2.4"/><circle cx="78" cy="761" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w5v" data-dev="relay" d="M120 919H30" style="stroke-width:2.4"/><circle cx="30" cy="919" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="relay" d="M120 945H78" style="stroke-width:2.4"/><circle cx="78" cy="945" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w5v" data-dev="relay" d="M120 971H30" style="stroke-width:2.4"/><circle cx="30" cy="971" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="relay" d="M120 1181H78" style="stroke-width:2.4"/><circle cx="78" cy="1181" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w5v" data-dev="servo2" d="M120 1313H30" style="stroke-width:2.4"/><circle cx="30" cy="1313" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="servo2" d="M120 1339H78" style="stroke-width:2.4"/><circle cx="78" cy="1339" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wgnd" data-dev="buzzer" d="M120 1497H78" style="stroke-width:2.4"/><circle cx="78" cy="1497" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w3v3" data-dev="dht" d="M1580 183H1646" style="stroke-width:2.4"/><circle cx="1646" cy="183" r="3.5" fill="var(--w3v3,#f97316)"/><path class="wire wgnd" data-dev="dht" d="M1580 209H1622" style="stroke-width:2.4"/><circle cx="1622" cy="209" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w3v3" data-dev="ldr" d="M1580 367H1646" style="stroke-width:2.4"/><circle cx="1646" cy="367" r="3.5" fill="var(--w3v3,#f97316)"/><path class="wire wgnd" data-dev="ldr" d="M1580 393H1622" style="stroke-width:2.4"/><circle cx="1622" cy="393" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w3v3" data-dev="flame" d="M1580 551H1646" style="stroke-width:2.4"/><circle cx="1646" cy="551" r="3.5" fill="var(--w3v3,#f97316)"/><path class="wire wgnd" data-dev="flame" d="M1580 577H1622" style="stroke-width:2.4"/><circle cx="1622" cy="577" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wgnd" data-dev="ledKhach" d="M1580 735H1622" style="stroke-width:2.4"/><circle cx="1622" cy="735" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wgnd" data-dev="ledNgu" d="M1580 893H1622" style="stroke-width:2.4"/><circle cx="1622" cy="893" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wgnd" data-dev="ledSan" d="M1580 1051H1622" style="stroke-width:2.4"/><circle cx="1622" cy="1051" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w5v" data-dev="lcd" d="M1580 1209H1670" style="stroke-width:2.4"/><circle cx="1670" cy="1209" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="lcd" d="M1580 1235H1622" style="stroke-width:2.4"/><circle cx="1622" cy="1235" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w5v" data-dev="servo1" d="M1580 1419H1670" style="stroke-width:2.4"/><circle cx="1670" cy="1419" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="servo1" d="M1580 1445H1622" style="stroke-width:2.4"/><circle cx="1622" cy="1445" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wsig" data-dev="sr04" d="M400 235H700"/><g class="wire" data-dev="sr04"><path d="M495 230L485 235L495 240z" style="fill:var(--wsig,#3b82f6)"/><text x="410" y="227" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="start">GPIO 32</text></g><path class="wire wsig" data-dev="sr04" d="M400 261H700"/><g class="wire" data-dev="sr04"><path d="M485 256L495 261L485 266z" style="fill:var(--wsig,#3b82f6)"/><text x="410" y="253" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="start">GPIO 35</text><rect x="481" y="250" width="68" height="22" fill="var(--card,#1e293b)"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(515 261)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="515" y="247" class="tx" font-size="11" text-anchor="middle">1kΩ</text><circle cx="630" cy="261" r="4" fill="var(--wsig,#3b82f6)"/><path d="M630 261V271M630 331V333M620 333H640M624 338H636M628 343H632" fill="none" stroke="var(--wgnd,#94a3b8)" stroke-width="2"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(630 301) rotate(90)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="644" y="305" class="tx" font-size="11">2kΩ</text></g><path class="wire wana" data-dev="mq2" d="M400 445H700"/><g class="wire" data-dev="mq2"><path d="M485 440L495 445L485 450z" style="fill:var(--wana,#c2703d)"/><text x="410" y="437" class="tx" font-size="11" font-weight="700" style="fill:var(--wana,#c2703d)" text-anchor="start">GPIO 33</text><rect x="481" y="434" width="68" height="22" fill="var(--card,#1e293b)"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(515 445)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="515" y="431" class="tx" font-size="11" text-anchor="middle">10kΩ</text><circle cx="630" cy="445" r="4" fill="var(--wana,#c2703d)"/><path d="M630 445V455M630 515V517M620 517H640M624 522H636M628 527H632" fill="none" stroke="var(--wgnd,#94a3b8)" stroke-width="2"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(630 485) rotate(90)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="644" y="489" class="tx" font-size="11">20kΩ</text></g><path class="wire wsig" data-dev="rain" d="M400 629H700"/><g class="wire" data-dev="rain"><path d="M485 624L495 629L485 634z" style="fill:var(--wsig,#3b82f6)"/><text x="410" y="621" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="start">GPIO 36</text></g><path class="wire wsig" data-dev="btn" d="M400 787H700"/><g class="wire" data-dev="btn"><path d="M485 782L495 787L485 792z" style="fill:var(--wsig,#3b82f6)"/><text x="410" y="779" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="start">GPIO 25</text></g><path class="wire wsig" data-dev="relay" d="M400 1023H700"/><g class="wire" data-dev="relay"><path d="M495 1018L485 1023L495 1028z" style="fill:var(--wsig,#3b82f6)"/><text x="410" y="1015" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="start">GPIO 26</text></g><path class="wire wpwm" data-dev="servo2" d="M400 1365H700"/><g class="wire" data-dev="servo2"><path d="M495 1360L485 1365L495 1370z" style="fill:var(--wpwm,#eab308)"/><text x="410" y="1357" class="tx" font-size="11" font-weight="700" style="fill:var(--wpwm,#eab308)" text-anchor="start">GPIO 27</text></g><path class="wire wsig" data-dev="buzzer" d="M400 1523H700"/><g class="wire" data-dev="buzzer"><path d="M495 1518L485 1523L495 1528z" style="fill:var(--wsig,#3b82f6)"/><text x="410" y="1515" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="start">GPIO 14</text></g><path class="wire wsig" data-dev="dht" d="M1300 235H1000"/><g class="wire" data-dev="dht"><text x="1290" y="227" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="end">GPIO 4</text><rect x="1151" y="224" width="68" height="22" fill="var(--card,#1e293b)"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(1185 235)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="1185" y="221" class="tx" font-size="11" text-anchor="middle">10kΩ</text><circle cx="1070" cy="235" r="4" fill="var(--wsig,#3b82f6)"/><path d="M1070 235V225M1070 165V163M1060 163H1080" fill="none" stroke="var(--w3v3,#f97316)" stroke-width="2"/><text x="1084" y="159" class="tx" font-size="11" style="fill:var(--w3v3,#f97316)">3V3</text><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(1070 195) rotate(90)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="1084" y="199" class="tx" font-size="11">10kΩ</text></g><path class="wire wsig" data-dev="ldr" d="M1300 419H1000"/><g class="wire" data-dev="ldr"><path d="M1215 414L1205 419L1215 424z" style="fill:var(--wsig,#3b82f6)"/><text x="1290" y="411" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="end">GPIO 39</text></g><path class="wire wsig" data-dev="flame" d="M1300 603H1000"/><g class="wire" data-dev="flame"><path d="M1215 598L1205 603L1215 608z" style="fill:var(--wsig,#3b82f6)"/><text x="1290" y="595" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="end">GPIO 34</text></g><path class="wire wsig" data-dev="ledKhach" d="M1300 761H1000"/><g class="wire" data-dev="ledKhach"><path d="M1205 756L1215 761L1205 766z" style="fill:var(--wsig,#3b82f6)"/><text x="1290" y="753" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="end">GPIO 19</text><rect x="1116" y="750" width="68" height="22" fill="var(--card,#1e293b)"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(1150 761)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="1150" y="747" class="tx" font-size="11" text-anchor="middle">220Ω</text></g><path class="wire wsig" data-dev="ledNgu" d="M1300 919H1000"/><g class="wire" data-dev="ledNgu"><path d="M1205 914L1215 919L1205 924z" style="fill:var(--wsig,#3b82f6)"/><text x="1290" y="911" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="end">GPIO 18</text><rect x="1116" y="908" width="68" height="22" fill="var(--card,#1e293b)"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(1150 919)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="1150" y="905" class="tx" font-size="11" text-anchor="middle">220Ω</text></g><path class="wire wsig" data-dev="ledSan" d="M1300 1077H1000"/><g class="wire" data-dev="ledSan"><path d="M1205 1072L1215 1077L1205 1082z" style="fill:var(--wsig,#3b82f6)"/><text x="1290" y="1069" class="tx" font-size="11" font-weight="700" style="fill:var(--wsig,#3b82f6)" text-anchor="end">GPIO 5</text><rect x="1116" y="1066" width="68" height="22" fill="var(--card,#1e293b)"/><path d="M-30 0H-21L-15-8L-5 8L5-8L15 8L21 0H30" transform="translate(1150 1077)" fill="none" stroke="var(--text,#e2e8f0)" stroke-width="2"/><text x="1150" y="1063" class="tx" font-size="11" text-anchor="middle">220Ω</text></g><path class="wire wi2c" data-dev="lcd" d="M1300 1261H1000"/><g class="wire" data-dev="lcd"><text x="1290" y="1253" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2c,#22c55e)" text-anchor="end">GPIO 21</text></g><path class="wire wi2c" data-dev="lcd" d="M1300 1287H1000"/><g class="wire" data-dev="lcd"><text x="1290" y="1279" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2c,#22c55e)" text-anchor="end">GPIO 22</text></g><path class="wire wpwm" data-dev="servo1" d="M1300 1471H1000"/><g class="wire" data-dev="servo1"><path d="M1205 1466L1215 1471L1205 1476z" style="fill:var(--wpwm,#eab308)"/><text x="1290" y="1463" class="tx" font-size="11" font-weight="700" style="fill:var(--wpwm,#eab308)" text-anchor="end">GPIO 23</text></g><path class="wire wac" data-dev="relay" d="M120 997H98V1155H120"/><g class="comp" data-dev="board1"><rect x="700" y="100" width="300" height="1456" rx="16" fill="url(#gsvgB1)" opacity=".16"/><rect x="700" y="100" width="300" height="1456" rx="16" class="cbox"/><text x="850" y="130" class="tx" font-size="20" font-weight="700" text-anchor="middle">ESP32 DevKit V1</text><rect x="770" y="738" width="160" height="180" rx="8" fill="#18181b" stroke="#a1a1aa"/><text x="850" y="832" class="tx" font-size="12" font-weight="700" text-anchor="middle" style="fill:#e5e5e5">ESP32-WROOM-32</text></g><text x="714" y="239" class="tx" font-size="12" text-anchor="start">IO32</text><circle cx="700" cy="235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="265" class="tx" font-size="12" text-anchor="start">IO35</text><circle cx="700" cy="261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="449" class="tx" font-size="12" text-anchor="start">IO33</text><circle cx="700" cy="445" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="633" class="tx" font-size="12" text-anchor="start">IO36</text><circle cx="700" cy="629" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="791" class="tx" font-size="12" text-anchor="start">IO25</text><circle cx="700" cy="787" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="1027" class="tx" font-size="12" text-anchor="start">IO26</text><circle cx="700" cy="1023" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="1369" class="tx" font-size="12" text-anchor="start">IO27</text><circle cx="700" cy="1365" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="1527" class="tx" font-size="12" text-anchor="start">IO14</text><circle cx="700" cy="1523" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="239" class="tx" font-size="12" text-anchor="end">IO4</text><circle cx="1000" cy="235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="423" class="tx" font-size="12" text-anchor="end">IO39</text><circle cx="1000" cy="419" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="607" class="tx" font-size="12" text-anchor="end">IO34</text><circle cx="1000" cy="603" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="765" class="tx" font-size="12" text-anchor="end">IO19</text><circle cx="1000" cy="761" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="923" class="tx" font-size="12" text-anchor="end">IO18</text><circle cx="1000" cy="919" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="1081" class="tx" font-size="12" text-anchor="end">IO5</text><circle cx="1000" cy="1077" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="1265" class="tx" font-size="12" text-anchor="end">IO21</text><circle cx="1000" cy="1261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="1291" class="tx" font-size="12" text-anchor="end">IO22</text><circle cx="1000" cy="1287" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="1475" class="tx" font-size="12" text-anchor="end">IO23</text><circle cx="1000" cy="1471" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><g class="comp" data-dev="sr04" data-tip="HC-SR04: TRIG GPIO32, ECHO GPIO35 qua chia áp 1kΩ+2kΩ (ECHO ra 5V)"><rect x="120" y="130" width="280" height="154" rx="12" class="cbox"/><text x="260" y="149" class="tx" font-size="15" font-weight="700" text-anchor="middle">📡 HC-SR04</text><text x="260" y="164" class="ts" font-size="11" text-anchor="middle">Siêu âm · cửa tự đóng</text><text x="132" y="187" class="tx" font-size="12" text-anchor="start">VCC <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="120" cy="183" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="213" class="tx" font-size="12" text-anchor="start">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="209" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="239" class="tx" font-size="12" text-anchor="end">TRIG</text><circle cx="400" cy="235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="265" class="tx" font-size="12" text-anchor="end">ECHO</text><circle cx="400" cy="261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="mq2" data-tip="MQ-2: AO qua chia áp 10kΩ+20kΩ vào GPIO33, warm-up 120 giây"><rect x="120" y="340" width="280" height="128" rx="12" class="cbox"/><text x="260" y="359" class="tx" font-size="15" font-weight="700" text-anchor="middle">💨 MQ-2</text><text x="260" y="374" class="ts" font-size="11" text-anchor="middle">Gas / khói</text><text x="132" y="397" class="tx" font-size="12" text-anchor="start">VCC <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="120" cy="393" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="423" class="tx" font-size="12" text-anchor="start">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="419" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="449" class="tx" font-size="12" text-anchor="end">AO</text><circle cx="400" cy="445" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="rain" data-tip="Cảm biến mưa: DO vào GPIO36 (chỉ input), VCC 3V3"><rect x="120" y="524" width="280" height="128" rx="12" class="cbox"/><text x="260" y="543" class="tx" font-size="15" font-weight="700" text-anchor="middle">🌧️ Cảm biến mưa</text><text x="260" y="558" class="ts" font-size="11" text-anchor="middle">DO · LOW = đang mưa</text><text x="132" y="581" class="tx" font-size="12" text-anchor="start">VCC <tspan style="fill:var(--w3v3,#f97316)" font-weight="700">· 3V3</tspan></text><circle cx="120" cy="577" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="607" class="tx" font-size="12" text-anchor="start">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="603" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="633" class="tx" font-size="12" text-anchor="end">DO</text><circle cx="400" cy="629" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="btn" data-tip="Nút khẩn cấp: chân 1 vào GPIO25, chân 2 xuống GND"><rect x="120" y="708" width="280" height="102" rx="12" class="cbox"/><text x="260" y="727" class="tx" font-size="15" font-weight="700" text-anchor="middle">🆘 Nút khẩn cấp</text><text x="260" y="742" class="ts" font-size="11" text-anchor="middle">INPUT_PULLUP</text><text x="132" y="765" class="tx" font-size="12" text-anchor="start">Chân 2 <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="761" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="791" class="tx" font-size="12" text-anchor="end">Chân 1</text><circle cx="400" cy="787" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="relay" data-tip="Relay: IN từ GPIO26 (LOW), VCC/JD-VCC 5V từ cáp USB #1, COM nối 5V, NO nối (+) quạt"><rect x="120" y="866" width="280" height="180" rx="12" class="cbox"/><text x="260" y="885" class="tx" font-size="15" font-weight="700" text-anchor="middle">🔁 Relay quạt</text><text x="260" y="900" class="ts" font-size="11" text-anchor="middle">Kích mức LOW · jumper L</text><text x="132" y="923" class="tx" font-size="12" text-anchor="start">VCC <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="120" cy="919" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="949" class="tx" font-size="12" text-anchor="start">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="945" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="975" class="tx" font-size="12" text-anchor="start">COM <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="120" cy="971" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="1001" class="tx" font-size="12" text-anchor="start">NO</text><circle cx="120" cy="997" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="1027" class="tx" font-size="12" text-anchor="end">IN</text><circle cx="400" cy="1023" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="relay" data-tip="Quạt 5V DC qua relay COM/NO: COM→5V, NO→(+) quạt, (−) quạt→GND. Dòng 200-500mA"><rect x="120" y="1102" width="280" height="102" rx="12" class="cbox"/><text x="260" y="1121" class="tx" font-size="15" font-weight="700" text-anchor="middle">🌀 Quạt 5V DC</text><text x="260" y="1136" class="ts" font-size="11" text-anchor="middle">Dòng 200–500mA</text><text x="132" y="1159" class="tx" font-size="12" text-anchor="start">(+)</text><circle cx="120" cy="1155" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="1185" class="tx" font-size="12" text-anchor="start">(−) <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="1181" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="servo2" data-tip="Servo phơi: đỏ 5V, nâu GND, cam/vàng vào GPIO27 (PWM)"><rect x="120" y="1260" width="280" height="128" rx="12" class="cbox"/><text x="260" y="1279" class="tx" font-size="15" font-weight="700" text-anchor="middle">🦾 Servo Phơi</text><text x="260" y="1294" class="ts" font-size="11" text-anchor="middle">Tụ 470µF sát servo</text><text x="132" y="1317" class="tx" font-size="12" text-anchor="start">Đỏ <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="120" cy="1313" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="1343" class="tx" font-size="12" text-anchor="start">Nâu <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="1339" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="1369" class="tx" font-size="12" text-anchor="end">Signal</text><circle cx="400" cy="1365" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="buzzer" data-tip="Còi 5V: (+) từ GPIO14, (−) xuống GND. Cháy ON/OFF 300ms, gas 150ms, khẩn cấp ON 1000/OFF 80ms, sự kiện 120ms"><rect x="120" y="1444" width="280" height="102" rx="12" class="cbox"/><text x="260" y="1463" class="tx" font-size="15" font-weight="700" text-anchor="middle">🔔 Còi 5V</text><text x="260" y="1478" class="ts" font-size="11" text-anchor="middle">4 chế độ âm thanh</text><text x="132" y="1501" class="tx" font-size="12" text-anchor="start">(−) <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="1497" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="1527" class="tx" font-size="12" text-anchor="end">(+)</text><circle cx="400" cy="1523" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="dht" data-tip="DHT11: DATA vào GPIO4, trở kéo lên 10kΩ lên 3V3"><rect x="1300" y="130" width="280" height="128" rx="12" class="cbox"/><text x="1440" y="149" class="tx" font-size="15" font-weight="700" text-anchor="middle">🌡️ DHT11</text><text x="1440" y="164" class="ts" font-size="11" text-anchor="middle">Nhiệt độ / độ ẩm</text><text x="1568" y="187" class="tx" font-size="12" text-anchor="end">VCC <tspan style="fill:var(--w3v3,#f97316)" font-weight="700">· 3V3</tspan></text><circle cx="1580" cy="183" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1568" y="213" class="tx" font-size="12" text-anchor="end">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="209" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="239" class="tx" font-size="12" text-anchor="start">DATA</text><circle cx="1300" cy="235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="ldr" data-tip="LM393 LDR: DO vào GPIO39 (chỉ input), VCC 3V3"><rect x="1300" y="314" width="280" height="128" rx="12" class="cbox"/><text x="1440" y="333" class="tx" font-size="15" font-weight="700" text-anchor="middle">💡 LM393 LDR</text><text x="1440" y="348" class="ts" font-size="11" text-anchor="middle">DO · HIGH = trời tối theo firmware v11.6</text><text x="1568" y="371" class="tx" font-size="12" text-anchor="end">VCC <tspan style="fill:var(--w3v3,#f97316)" font-weight="700">· 3V3</tspan></text><circle cx="1580" cy="367" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1568" y="397" class="tx" font-size="12" text-anchor="end">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="393" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="423" class="tx" font-size="12" text-anchor="start">DO</text><circle cx="1300" cy="419" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="flame" data-tip="Cảm biến lửa: DO vào GPIO34 (chỉ input), VCC 3V3"><rect x="1300" y="498" width="280" height="128" rx="12" class="cbox"/><text x="1440" y="517" class="tx" font-size="15" font-weight="700" text-anchor="middle">🔥 Cảm biến lửa</text><text x="1440" y="532" class="ts" font-size="11" text-anchor="middle">DO · LOW = có lửa</text><text x="1568" y="555" class="tx" font-size="12" text-anchor="end">VCC <tspan style="fill:var(--w3v3,#f97316)" font-weight="700">· 3V3</tspan></text><circle cx="1580" cy="551" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1568" y="581" class="tx" font-size="12" text-anchor="end">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="577" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="607" class="tx" font-size="12" text-anchor="start">DO</text><circle cx="1300" cy="603" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="ledKhach" data-tip="LED khách: GPIO19 → 220Ω → Anode, Cathode → GND"><rect x="1300" y="682" width="280" height="102" rx="12" class="cbox"/><text x="1440" y="701" class="tx" font-size="15" font-weight="700" text-anchor="middle">🏮 LED Phòng Khách</text><text x="1440" y="716" class="ts" font-size="11" text-anchor="middle">Qua trở 220Ω</text><text x="1568" y="739" class="tx" font-size="12" text-anchor="end">Cathode <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="735" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="765" class="tx" font-size="12" text-anchor="start">Anode</text><circle cx="1300" cy="761" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="ledNgu" data-tip="LED ngủ: GPIO18 → 220Ω → Anode, Cathode → GND"><rect x="1300" y="840" width="280" height="102" rx="12" class="cbox"/><text x="1440" y="859" class="tx" font-size="15" font-weight="700" text-anchor="middle">🏮 LED Phòng Ngủ</text><text x="1440" y="874" class="ts" font-size="11" text-anchor="middle">Qua trở 220Ω</text><text x="1568" y="897" class="tx" font-size="12" text-anchor="end">Cathode <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="893" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="923" class="tx" font-size="12" text-anchor="start">Anode</text><circle cx="1300" cy="919" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="ledSan" data-tip="LED sân: GPIO5 → 220Ω → Anode, Cathode → GND"><rect x="1300" y="998" width="280" height="102" rx="12" class="cbox"/><text x="1440" y="1017" class="tx" font-size="15" font-weight="700" text-anchor="middle">🏮 LED Sân</text><text x="1440" y="1032" class="ts" font-size="11" text-anchor="middle">Tự bật khi tối</text><text x="1568" y="1055" class="tx" font-size="12" text-anchor="end">Cathode <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="1051" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="1081" class="tx" font-size="12" text-anchor="start">Anode</text><circle cx="1300" cy="1077" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="lcd" data-tip="LCD I2C: SDA GPIO21, SCL GPIO22, VCC 5V"><rect x="1300" y="1156" width="280" height="154" rx="12" class="cbox"/><text x="1440" y="1175" class="tx" font-size="15" font-weight="700" text-anchor="middle">📟 LCD1602 I2C</text><text x="1440" y="1190" class="ts" font-size="11" text-anchor="middle">Địa chỉ 0x27</text><text x="1568" y="1213" class="tx" font-size="12" text-anchor="end">VCC <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="1580" cy="1209" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1568" y="1239" class="tx" font-size="12" text-anchor="end">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="1235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="1265" class="tx" font-size="12" text-anchor="start">SDA</text><circle cx="1300" cy="1261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="1291" class="tx" font-size="12" text-anchor="start">SCL</text><circle cx="1300" cy="1287" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="servo1" data-tip="Servo cửa: đỏ 5V, nâu GND, cam/vàng vào GPIO23 (PWM)"><rect x="1300" y="1366" width="280" height="128" rx="12" class="cbox"/><text x="1440" y="1385" class="tx" font-size="15" font-weight="700" text-anchor="middle">🦾 Servo Cửa</text><text x="1440" y="1400" class="ts" font-size="11" text-anchor="middle">Tụ 470µF sát servo</text><text x="1568" y="1423" class="tx" font-size="12" text-anchor="end">Đỏ <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="1580" cy="1419" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1568" y="1449" class="tx" font-size="12" text-anchor="end">Nâu <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="1445" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="1475" class="tx" font-size="12" text-anchor="start">Signal</text><circle cx="1300" cy="1471" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><path class="wire w5v" d="M780 1556V1706" style="stroke-width:4"/><circle cx="780" cy="1616" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="780" y="1548" class="tx" font-size="11" text-anchor="middle">VIN</text><path class="wire w3v3" d="M850 1556V1640" style="stroke-width:4"/><circle cx="850" cy="1640" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="850" y="1548" class="tx" font-size="11" text-anchor="middle">3V3</text><path class="wire wgnd" d="M920 1556V1706" style="stroke-width:4"/><circle cx="920" cy="1664" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="920" y="1548" class="tx" font-size="11" text-anchor="middle">GND</text><g class="comp" data-dev="usb"><rect x="710" y="1706" width="280" height="58" rx="10" class="cbox"/><text x="850" y="1730" class="tx" font-size="14" font-weight="700" text-anchor="middle">🔌 Cáp USB #1 (cắt dây)</text><text x="850" y="1750" class="ts" font-size="11" text-anchor="middle">Đỏ = +5V · Đen = GND · trắng/xanh lá: cắt bỏ, bọc cách điện</text></g><text x="788" y="1696" class="tx" font-size="11" style="fill:var(--w5v,#ef4444)">đỏ +5V</text><text x="928" y="1696" class="tx" font-size="11">đen GND</text><text x="850" y="1801" class="ts" font-size="12" text-anchor="middle">Cáp #1: VIN + ray 5V (servo, relay, HC-SR04, MQ-2, LCD) · ray 3V3 (DHT11, Flame, Rain, LM393) · tụ lọc 5V–GND sát servo và relay</text></svg>
+  </div>
+
+  <div class="card">
+    <h3>📋 Bảng GPIO chi tiết — Board 1</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>GPIO</th><th>Thiết bị</th><th>Kiểu</th><th>Mức/Ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td><b>4</b></td><td>🌡️ DHT11 DATA</td><td><span class="badge b-Digital">Digital</span></td><td>Trở kéo lên 10kΩ (module có sẵn)</td></tr>
+          <tr><td><b>5</b></td><td>🏮 LED Sân</td><td><span class="badge b-Output">Output</span></td><td>Qua trở 220Ω · Blynk V8 (đèn mode 0–4) · tự bật khi tối</td></tr>
+          <tr><td><b>14</b></td><td>🔔 Còi báo động</td><td><span class="badge b-Output">Output</span></td><td>Ưu tiên: lửa &gt; gas &gt; khẩn cấp &gt; sự kiện</td></tr>
+          <tr><td><b>16</b></td><td>— Trống —</td><td><span class="badge b-Onboard">Trống</span></td><td>Đã bỏ DFPlayer · không nối dây</td></tr>
+          <tr><td><b>17</b></td><td>— Trống —</td><td><span class="badge b-Onboard">Trống</span></td><td>Đã bỏ DFPlayer · không nối dây</td></tr>
+          <tr><td><b>18</b></td><td>🏮 LED Phòng Ngủ</td><td><span class="badge b-Output">Output</span></td><td>Qua trở 220Ω · Blynk V8 (đèn mode 0–4)</td></tr>
+          <tr><td><b>19</b></td><td>🏮 LED Phòng Khách</td><td><span class="badge b-Output">Output</span></td><td>Qua trở 220Ω · Blynk V8 (đèn mode 0–4)</td></tr>
+          <tr><td><b>21</b></td><td>📟 LCD SDA</td><td><span class="badge b-I2C">I2C</span></td><td>Module PCF8574 có kéo lên sẵn</td></tr>
+          <tr><td><b>22</b></td><td>📟 LCD SCL</td><td><span class="badge b-I2C">I2C</span></td><td>Địa chỉ LCD: 0x27</td></tr>
+          <tr><td><b>23</b></td><td>🦾 Servo Cửa</td><td><span class="badge b-PWM">PWM</span></td><td>Servo 50Hz · nguồn 5V riêng</td></tr>
+          <tr><td><b>25</b></td><td>🆘 Nút khẩn cấp</td><td><span class="badge b-Input">Input</span></td><td>INPUT_PULLUP · nhấn = LOW · chống dội</td></tr>
+          <tr><td><b>26</b></td><td>🔁 Relay Quạt</td><td><span class="badge b-Output">Output</span></td><td>Kích mức LOW · Blynk V6</td></tr>
+          <tr><td><b>27</b></td><td>🦾 Servo Phơi</td><td><span class="badge b-PWM">PWM</span></td><td>Servo 50Hz · nguồn 5V riêng</td></tr>
+          <tr><td><b>32</b></td><td>📡 HC-SR04 TRIG</td><td><span class="badge b-Output">Output</span></td><td>Xung kích 10µs</td></tr>
+          <tr><td><b>33</b></td><td>🧪 MQ-2 AO</td><td><span class="badge b-Analog">Analog</span></td><td>Qua chia áp 10 kΩ + 20 kΩ · làm nóng 120 giây · ngưỡng gas theo đường nền và ngưỡng dự phòng</td></tr>
+          <tr><td><b>34</b></td><td>🔥 Cảm biến Lửa DO</td><td><span class="badge b-Input">Input</span></td><td>Chỉ input · LOW = có lửa</td></tr>
+          <tr><td><b>35</b></td><td>📡 HC-SR04 ECHO</td><td><span class="badge b-Input">Input</span></td><td>Chỉ input · ⚠ qua chia áp 1kΩ+2kΩ</td></tr>
+          <tr><td><b>36</b></td><td>🌧️ Cảm biến Mưa DO</td><td><span class="badge b-Input">Input</span></td><td>Chỉ input (VP) · LOW = đang mưa</td></tr>
+          <tr><td><b>39</b></td><td>💡 LDR DO</td><td><span class="badge b-Input">Input</span></td><td>Chỉ nhận tín hiệu vào · HIGH = tối theo firmware v11.6</td></tr>
+          <tr><td><b>VIN</b></td><td>🔌 Nguồn 5V</td><td><span class="badge b-Power">Power</span></td><td>Từ cáp USB #1 cắt dây (đỏ +5V) · GND chung toàn hệ thống</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧰 Danh sách linh kiện — Board 1</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Linh kiện</th><th>SL</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>ESP32 DevKit V1 (30 chân)</td><td>1</td></tr>
+          <tr><td>2</td><td>Cảm biến DHT11 (module)</td><td>1</td></tr>
+          <tr><td>3</td><td>Cảm biến gas/khói MQ-2</td><td>1</td></tr>
+          <tr><td>4</td><td>Cảm biến lửa hồng ngoại</td><td>1</td></tr>
+          <tr><td>5</td><td>Cảm biến mưa (module + tấm cảm ứng)</td><td>1</td></tr>
+          <tr><td>6</td><td>Module quang trở LM393 (LDR)</td><td>1</td></tr>
+          <tr><td>7</td><td>Cảm biến siêu âm HC-SR04</td><td>1</td></tr>
+          <tr><td>8</td><td>Servo SG90/MG90S</td><td>2</td></tr>
+          <tr><td>9</td><td>Relay 1 kênh 5V (kích LOW)</td><td>1</td></tr>
+          <tr><td>10</td><td>LED 5mm + trở 220Ω</td><td>3</td></tr>
+          <tr><td>11</td><td>Còi báo động 5V (active buzzer)</td><td>1</td></tr>
+          <tr><td>12</td><td>LCD1602 + module I2C PCF8574</td><td>1</td></tr>
+          <tr><td>13</td><td>Nút nhấn khẩn cấp</td><td>1</td></tr>
+          <tr><td>14</td><td>Cáp USB cắt dây #1 (đỏ +5V, đen GND) + đầu sạc ≥2A</td><td>1</td></tr>
+          <tr><td>15</td><td>Trở 1kΩ + 2kΩ (chia áp ECHO) + chia áp MQ-2</td><td>4</td></tr>
+          <tr><td>16</td><td>Tụ hóa 470µF/16V</td><td>2</td></tr>
+          <tr><td>17</td><td>Dây jumper, breadboard/PCB, vỏ hộp</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card"><h3>☁️ Blynk Virtual Pin V0–V12</h3><div class="table-wrap"><table><thead><tr><th>Pin</th><th>Dữ liệu</th><th>Kiểu</th><th>Giá trị</th></tr></thead><tbody><tr><td>V0</td><td>Nhiệt độ</td><td>Double</td><td>°C</td></tr><tr><td>V1</td><td>Độ ẩm</td><td>Double</td><td>%</td></tr><tr><td>V2</td><td>Ánh sáng</td><td>Int</td><td>0 = TỐI / 100 = SÁNG</td></tr><tr><td>V3</td><td>Gas</td><td>Int</td><td>0–4095</td></tr><tr><td>V4</td><td>Cảnh báo</td><td>Int</td><td>0 / 150 / 255</td></tr><tr><td>V6</td><td>Quạt</td><td>Int</td><td>0 / 1</td></tr><tr><td>V7</td><td>Cửa</td><td>Int</td><td>0 / 1</td></tr><tr><td>V8</td><td>Đèn mode</td><td>Int</td><td>0–4</td></tr><tr><td>V9</td><td>Trạng thái text</td><td>String</td><td>—</td></tr><tr><td>V10</td><td>Nút self-test</td><td>Int</td><td>0 / 1</td></tr><tr><td>V11</td><td>Mưa</td><td>Int</td><td>0 / 1</td></tr><tr><td>V12</td><td>Phơi</td><td>Int</td><td>0 / 1</td></tr></tbody></table></div></div>
+  <div class="card"><h3>🔔 Còi: 4 chế độ âm thanh (v11.6)</h3><div class="table-wrap"><table><thead><tr><th>Chế độ</th><th>BẬT</th><th>TẮT</th><th>Ghi chú</th></tr></thead><tbody><tr><td>🔥 Báo cháy</td><td>300 ms</td><td>300 ms</td><td>Còi cứu hỏa</td></tr><tr><td>💨 Báo gas</td><td>150 ms</td><td>150 ms</td><td>Bíp tắc nhanh</td></tr><tr><td>🆘 Khẩn cấp</td><td>1000 ms</td><td>80 ms</td><td>Bíp dài</td></tr><tr><td>🔔 Sự kiện</td><td>120 ms</td><td>120 ms</td><td>Mưa bắt đầu 3 bíp · mưa tạnh 2 bíp · trời tối bật đèn sân 1 bíp · mở/đóng cửa hoặc quạt 1 bíp</td></tr></tbody></table></div></div>
+  <div class="card"><h3>⚙️ Ngưỡng tự động của hệ thống</h3><div class="table-wrap"><table><thead><tr><th>Chức năng</th><th>Ngưỡng / thời gian</th></tr></thead><tbody><tr><td>Quạt tự bật</td><td>Nhiệt ≥ 35°C</td></tr><tr><td>Quạt tự tắt</td><td>Nhiệt ≤ 33°C và giữ 10 giây</td></tr><tr><td>Gas Warn</td><td>&gt; baseline + 400 (bật quạt thông gió)</td></tr><tr><td>Gas Danger</td><td>&gt; baseline + 800 (mở cửa + báo động)</td></tr><tr><td>MQ-2 warm-up</td><td>120 giây đầu (LCD đếm ngược)</td></tr><tr><td>Cửa tự đóng</td><td>120 giây sau khi mở</td></tr><tr><td>Cửa tự đóng khi SR04</td><td>15 giây sau khi mở bằng tay</td></tr><tr><td>Emergency reset</td><td>60 giây (thoát khẩn cấp)</td></tr><tr><td>Override timeout</td><td>60 giây (tự quay về chế độ tự động)</td></tr><tr><td>Fire clear</td><td>5 giây hết lửa (hủy báo cháy)</td></tr></tbody></table></div></div>
+
+  <div class="note danger">
+    <b>⛔ LƯU Ý ĐẤU DÂY:</b> Chân ECHO HC-SR04 ra 5 V phải chia áp 1 kΩ + 2 kΩ trước GPIO35; chân AO MQ-2 qua chia áp 10 kΩ + 20 kΩ vào GPIO33; servo và phần nguồn cuộn relay dùng nguồn 5 V đủ dòng, chung GND tín hiệu; relay GPIO26 kích mức LOW.
+  </div>
+  <div class="note ok">
+    <b>✅ MẸO:</b> GPIO 16/17 đã trống sau khi bỏ DFPlayer — để nguyên không nối, dành cho mở rộng sau này. GPIO 34/35/36/39 chỉ nhận tín hiệu vào; không dùng làm đầu ra và không dựa vào điện trở kéo lên nội trên các chân này.
+  </div>
+  <div class="note danger">
+    <b>⚠️ CẦN XÁC NHẬN CỰC TÍNH LDR:</b> Firmware v11.6 đặt `LDR_TOI_LA_HIGH = 1`, vì vậy phần mềm hiểu GPIO39 mức HIGH là trời tối. Nếu module LM393 của bạn đưa DO xuống LOW khi tối, đèn sân có thể chạy ngược; hãy xác minh đầu ra module và sửa cấu hình cho khớp trước khi dùng tự động.
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 3: BOARD 2 ESP32-S3 ══════════════════ -->
+<section class="tab-panel" id="tab3">
+  <h2 class="panel-title">🎤 Board 2 — ESP32-S3 N16R8 (Trợ lý giọng nói XiaoZhi AI)</h2>
+  <p class="panel-desc">Di chuột lên linh kiện để xem chú thích · Click vào linh kiện/dây để tô sáng kết nối liên quan · Dây tím = I2S (âm thanh), dây trắng = SPI (màn hình).</p>
+
+  <div class="svg-toolbar no-print">
+    <button class="btn btn-grad" onclick="zoomSvg('svgB2',1.2)">🔍 Phóng to</button>
+    <button class="btn btn-grad" onclick="zoomSvg('svgB2',0.8)">🔎 Thu nhỏ</button>
+    <button class="btn btn-grad" onclick="zoomReset('svgB2')">↺ Đặt lại</button>
+    <button class="btn btn-grad" onclick="downloadSvg('svgB2','so-do-board2-esp32s3.svg')">⬇️ Tải SVG</button>
+    <button class="btn btn-grad" onclick="window.print()">🖨️ In sơ đồ</button>
+  </div>
+
+  <div class="svg-viewport">
+  <svg id="svgB2" viewBox="0 0 1700 1072" width="1700" role="img" aria-label="Sơ đồ đấu dây Board 2 ESP32-S3"><defs><linearGradient id="gsvgB2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs><style>.tx{fill:var(--text,#e2e8f0);font-family:Segoe UI,Roboto,Arial,sans-serif}.ts{fill:var(--muted,#94a3b8);font-family:Segoe UI,Roboto,Arial,sans-serif}.cbox{fill:var(--card,#1e293b);stroke:var(--border,#475569);stroke-width:2}.wsig{stroke:var(--wsig,#3b82f6)}.wpwm{stroke:var(--wpwm,#eab308)}.wi2c{stroke:var(--wi2c,#22c55e)}.wi2s{stroke:var(--wi2s,#a855f7)}.wspi{stroke:var(--wspi,#e2e8f0)}.wana{stroke:var(--wana,#c2703d)}.wac{stroke:var(--wac,#f43f5e)}.w5v{stroke:var(--w5v,#ef4444)}.w3v3{stroke:var(--w3v3,#f97316)}.wgnd{stroke:var(--wgnd,#94a3b8)}</style><path class="wire w5v" data-dev="power5" d="M30 852H1670" style="stroke-width:4"/><text x="150" y="846" class="tx" font-size="11" font-weight="700" style="fill:var(--w5v,#ef4444)">RAY 5V</text><path class="wire w5v" data-dev="power5" d="M30 108V852" style="stroke-width:3"/><circle cx="30" cy="852" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="30" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w5v,#ef4444)">5V</text><path class="wire w5v" data-dev="power5" d="M1670 108V852" style="stroke-width:3"/><circle cx="1670" cy="852" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1670" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w5v,#ef4444)">5V</text><path class="wire w3v3" data-dev="power3v3" d="M54 876H1646" style="stroke-width:4"/><text x="150" y="870" class="tx" font-size="11" font-weight="700" style="fill:var(--w3v3,#f97316)">RAY 3V3</text><path class="wire w3v3" data-dev="power3v3" d="M54 108V876" style="stroke-width:3"/><circle cx="54" cy="876" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="54" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w3v3,#f97316)">3V3</text><path class="wire w3v3" data-dev="power3v3" d="M1646 108V876" style="stroke-width:3"/><circle cx="1646" cy="876" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1646" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--w3v3,#f97316)">3V3</text><path class="wire wgnd" data-dev="powergnd" d="M78 900H1622" style="stroke-width:4"/><text x="150" y="894" class="tx" font-size="11" font-weight="700" style="fill:var(--wgnd,#94a3b8)">RAY GND</text><path class="wire wgnd" data-dev="powergnd" d="M78 108V900" style="stroke-width:3"/><circle cx="78" cy="900" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="78" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--wgnd,#94a3b8)">GND</text><path class="wire wgnd" data-dev="powergnd" d="M1622 108V900" style="stroke-width:3"/><circle cx="1622" cy="900" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1622" y="98" class="tx" font-size="10" font-weight="700" text-anchor="middle" style="fill:var(--wgnd,#94a3b8)">GND</text><path class="wire w3v3" data-dev="mic" d="M120 183H54" style="stroke-width:2.4"/><circle cx="54" cy="183" r="3.5" fill="var(--w3v3,#f97316)"/><path class="wire wgnd" data-dev="mic" d="M120 209H78" style="stroke-width:2.4"/><circle cx="78" cy="209" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wgnd" data-dev="mic" d="M120 235H78" style="stroke-width:2.4"/><circle cx="78" cy="235" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w5v" data-dev="amp" d="M120 445H30" style="stroke-width:2.4"/><circle cx="30" cy="445" r="3.5" fill="var(--w5v,#ef4444)"/><path class="wire wgnd" data-dev="amp" d="M120 471H78" style="stroke-width:2.4"/><circle cx="78" cy="471" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire w3v3" data-dev="tft" d="M1580 183H1646" style="stroke-width:2.4"/><circle cx="1646" cy="183" r="3.5" fill="var(--w3v3,#f97316)"/><path class="wire wgnd" data-dev="tft" d="M1580 209H1622" style="stroke-width:2.4"/><circle cx="1622" cy="209" r="3.5" fill="var(--wgnd,#94a3b8)"/><path class="wire wi2s" data-dev="mic" d="M400 261H700"/><g class="wire" data-dev="mic"><path d="M495 256L485 261L495 266z" style="fill:var(--wi2s,#a855f7)"/><text x="410" y="253" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2s,#a855f7)" text-anchor="start">GPIO 4</text></g><path class="wire wi2s" data-dev="mic" d="M400 287H700"/><g class="wire" data-dev="mic"><path d="M495 282L485 287L495 292z" style="fill:var(--wi2s,#a855f7)"/><text x="410" y="279" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2s,#a855f7)" text-anchor="start">GPIO 5</text></g><path class="wire wi2s" data-dev="mic" d="M400 313H700"/><g class="wire" data-dev="mic"><path d="M485 308L495 313L485 318z" style="fill:var(--wi2s,#a855f7)"/><text x="410" y="305" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2s,#a855f7)" text-anchor="start">GPIO 6</text></g><path class="wire wi2s" data-dev="amp" d="M400 549H700"/><g class="wire" data-dev="amp"><path d="M495 544L485 549L495 554z" style="fill:var(--wi2s,#a855f7)"/><text x="410" y="541" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2s,#a855f7)" text-anchor="start">GPIO 15</text></g><path class="wire wi2s" data-dev="amp" d="M400 575H700"/><g class="wire" data-dev="amp"><path d="M495 570L485 575L495 580z" style="fill:var(--wi2s,#a855f7)"/><text x="410" y="567" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2s,#a855f7)" text-anchor="start">GPIO 16</text></g><path class="wire wi2s" data-dev="amp" d="M400 601H700"/><g class="wire" data-dev="amp"><path d="M495 596L485 601L495 606z" style="fill:var(--wi2s,#a855f7)"/><text x="410" y="593" class="tx" font-size="11" font-weight="700" style="fill:var(--wi2s,#a855f7)" text-anchor="start">GPIO 17</text></g><path class="wire wspi" data-dev="tft" d="M1300 235H1000"/><g class="wire" data-dev="tft"><path d="M1205 230L1215 235L1205 240z" style="fill:var(--wspi,#e2e8f0)"/><text x="1290" y="227" class="tx" font-size="11" font-weight="700" style="fill:var(--wspi,#e2e8f0)" text-anchor="end">GPIO 8</text></g><path class="wire wspi" data-dev="tft" d="M1300 261H1000"/><g class="wire" data-dev="tft"><path d="M1205 256L1215 261L1205 266z" style="fill:var(--wspi,#e2e8f0)"/><text x="1290" y="253" class="tx" font-size="11" font-weight="700" style="fill:var(--wspi,#e2e8f0)" text-anchor="end">GPIO 9</text></g><path class="wire wspi" data-dev="tft" d="M1300 287H1000"/><g class="wire" data-dev="tft"><path d="M1205 282L1215 287L1205 292z" style="fill:var(--wspi,#e2e8f0)"/><text x="1290" y="279" class="tx" font-size="11" font-weight="700" style="fill:var(--wspi,#e2e8f0)" text-anchor="end">GPIO 10</text></g><path class="wire wspi" data-dev="tft" d="M1300 313H1000"/><g class="wire" data-dev="tft"><path d="M1205 308L1215 313L1205 318z" style="fill:var(--wspi,#e2e8f0)"/><text x="1290" y="305" class="tx" font-size="11" font-weight="700" style="fill:var(--wspi,#e2e8f0)" text-anchor="end">GPIO 11</text></g><path class="wire wspi" data-dev="tft" d="M1300 339H1000"/><g class="wire" data-dev="tft"><path d="M1205 334L1215 339L1205 344z" style="fill:var(--wspi,#e2e8f0)"/><text x="1290" y="331" class="tx" font-size="11" font-weight="700" style="fill:var(--wspi,#e2e8f0)" text-anchor="end">GPIO 12</text></g><path class="wire wpwm" data-dev="tft" d="M1300 365H1000"/><g class="wire" data-dev="tft"><path d="M1205 360L1215 365L1205 370z" style="fill:var(--wpwm,#eab308)"/><text x="1290" y="357" class="tx" font-size="11" font-weight="700" style="fill:var(--wpwm,#eab308)" text-anchor="end">GPIO 18</text></g><path class="wire wac" data-dev="amp" d="M120 497H98V733H120"/><path class="wire wac" data-dev="amp" d="M120 523H98V759H120"/><g class="comp" data-dev="board2"><rect x="700" y="100" width="300" height="692" rx="16" fill="url(#gsvgB2)" opacity=".16"/><rect x="700" y="100" width="300" height="692" rx="16" class="cbox"/><text x="850" y="130" class="tx" font-size="20" font-weight="700" text-anchor="middle">ESP32-S3 N16R8</text><rect x="770" y="356" width="160" height="180" rx="8" fill="#18181b" stroke="#a1a1aa"/><text x="850" y="450" class="tx" font-size="12" font-weight="700" text-anchor="middle" style="fill:#e5e5e5">ESP32-S3-WROOM-1</text><text x="850" y="152" class="ts" font-size="11" text-anchor="middle">BOOT (GPIO0) · RGB WS2812 (GPIO48)</text></g><text x="714" y="265" class="tx" font-size="12" text-anchor="start">IO4</text><circle cx="700" cy="261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="291" class="tx" font-size="12" text-anchor="start">IO5</text><circle cx="700" cy="287" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="317" class="tx" font-size="12" text-anchor="start">IO6</text><circle cx="700" cy="313" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="553" class="tx" font-size="12" text-anchor="start">IO15</text><circle cx="700" cy="549" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="579" class="tx" font-size="12" text-anchor="start">IO16</text><circle cx="700" cy="575" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="714" y="605" class="tx" font-size="12" text-anchor="start">IO17</text><circle cx="700" cy="601" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="239" class="tx" font-size="12" text-anchor="end">IO8</text><circle cx="1000" cy="235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="265" class="tx" font-size="12" text-anchor="end">IO9</text><circle cx="1000" cy="261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="291" class="tx" font-size="12" text-anchor="end">IO10</text><circle cx="1000" cy="287" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="317" class="tx" font-size="12" text-anchor="end">IO11</text><circle cx="1000" cy="313" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="343" class="tx" font-size="12" text-anchor="end">IO12</text><circle cx="1000" cy="339" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="986" y="369" class="tx" font-size="12" text-anchor="end">IO18</text><circle cx="1000" cy="365" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><g class="comp" data-dev="mic" data-tip="Mic INMP441: VDD 3V3, L/R nối GND, WS GPIO4, SCK GPIO5, SD GPIO6"><rect x="120" y="130" width="280" height="206" rx="12" class="cbox"/><text x="260" y="149" class="tx" font-size="15" font-weight="700" text-anchor="middle">🎙️ Mic INMP441</text><text x="260" y="164" class="ts" font-size="11" text-anchor="middle">I2S · kênh trái</text><text x="132" y="187" class="tx" font-size="12" text-anchor="start">VDD <tspan style="fill:var(--w3v3,#f97316)" font-weight="700">· 3V3</tspan></text><circle cx="120" cy="183" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="213" class="tx" font-size="12" text-anchor="start">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="209" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="239" class="tx" font-size="12" text-anchor="start">L/R <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="265" class="tx" font-size="12" text-anchor="end">WS</text><circle cx="400" cy="261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="291" class="tx" font-size="12" text-anchor="end">SCK</text><circle cx="400" cy="287" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="317" class="tx" font-size="12" text-anchor="end">SD</text><circle cx="400" cy="313" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="amp" data-tip="MAX98357A: VIN 5V từ cáp USB #2, DIN GPIO15, BCLK GPIO16, LRC GPIO17"><rect x="120" y="392" width="280" height="232" rx="12" class="cbox"/><text x="260" y="411" class="tx" font-size="15" font-weight="700" text-anchor="middle">🔊 MAX98357A</text><text x="260" y="426" class="ts" font-size="11" text-anchor="middle">Amp I2S · 5V từ cáp #2</text><text x="132" y="449" class="tx" font-size="12" text-anchor="start">VIN <tspan style="fill:var(--w5v,#ef4444)" font-weight="700">· 5V</tspan></text><circle cx="120" cy="445" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="475" class="tx" font-size="12" text-anchor="start">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="120" cy="471" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="501" class="tx" font-size="12" text-anchor="start">OUT+</text><circle cx="120" cy="497" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="527" class="tx" font-size="12" text-anchor="start">OUT−</text><circle cx="120" cy="523" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="553" class="tx" font-size="12" text-anchor="end">DIN</text><circle cx="400" cy="549" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="579" class="tx" font-size="12" text-anchor="end">BCLK</text><circle cx="400" cy="575" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="388" y="605" class="tx" font-size="12" text-anchor="end">LRC</text><circle cx="400" cy="601" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="amp" data-tip="Loa 4Ω/3W nối OUT+ và OUT− của amp, tuyệt đối không chạm GND"><rect x="120" y="680" width="280" height="102" rx="12" class="cbox"/><text x="260" y="699" class="tx" font-size="15" font-weight="700" text-anchor="middle">🔈 Loa 4Ω/3W</text><text x="260" y="714" class="ts" font-size="11" text-anchor="middle">Nối OUT+ / OUT−</text><text x="132" y="737" class="tx" font-size="12" text-anchor="start">(+)</text><circle cx="120" cy="733" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="132" y="763" class="tx" font-size="12" text-anchor="start">(−)</text><circle cx="120" cy="759" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><g class="comp" data-dev="tft" data-tip="TFT ST7735: CS 8, RST 9, DC 10, MOSI 11, SCK 12, BLK 18, VCC 3V3"><rect x="1300" y="130" width="280" height="258" rx="12" class="cbox"/><text x="1440" y="149" class="tx" font-size="15" font-weight="700" text-anchor="middle">🖥️ TFT 1.8&quot; ST7735</text><text x="1440" y="164" class="ts" font-size="11" text-anchor="middle">SPI · nguồn 3V3</text><text x="1568" y="187" class="tx" font-size="12" text-anchor="end">VCC <tspan style="fill:var(--w3v3,#f97316)" font-weight="700">· 3V3</tspan></text><circle cx="1580" cy="183" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1568" y="213" class="tx" font-size="12" text-anchor="end">GND <tspan style="fill:var(--wgnd,#94a3b8)" font-weight="700">· GND</tspan></text><circle cx="1580" cy="209" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="239" class="tx" font-size="12" text-anchor="start">CS</text><circle cx="1300" cy="235" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="265" class="tx" font-size="12" text-anchor="start">RST</text><circle cx="1300" cy="261" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="291" class="tx" font-size="12" text-anchor="start">DC</text><circle cx="1300" cy="287" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="317" class="tx" font-size="12" text-anchor="start">MOSI</text><circle cx="1300" cy="313" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="343" class="tx" font-size="12" text-anchor="start">SCK</text><circle cx="1300" cy="339" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="1312" y="369" class="tx" font-size="12" text-anchor="start">BLK</text><circle cx="1300" cy="365" r="4" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/></g><path class="wire w5v" d="M780 792V942" style="stroke-width:4"/><circle cx="780" cy="852" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="780" y="784" class="tx" font-size="11" text-anchor="middle">5V</text><path class="wire w3v3" d="M850 792V876" style="stroke-width:4"/><circle cx="850" cy="876" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="850" y="784" class="tx" font-size="11" text-anchor="middle">3V3</text><path class="wire wgnd" d="M920 792V942" style="stroke-width:4"/><circle cx="920" cy="900" r="4.5" fill="#0f172a" stroke="#e2e8f0" stroke-width="1.5"/><text x="920" y="784" class="tx" font-size="11" text-anchor="middle">GND</text><g class="comp" data-dev="usb"><rect x="710" y="942" width="280" height="58" rx="10" class="cbox"/><text x="850" y="966" class="tx" font-size="14" font-weight="700" text-anchor="middle">🔌 Cáp USB #2 (cắt dây)</text><text x="850" y="986" class="ts" font-size="11" text-anchor="middle">Đỏ = +5V · Đen = GND · trắng/xanh lá: cắt bỏ, bọc cách điện</text></g><text x="788" y="932" class="tx" font-size="11" style="fill:var(--w5v,#ef4444)">đỏ +5V</text><text x="928" y="932" class="tx" font-size="11">đen GND</text><text x="850" y="1037" class="ts" font-size="12" text-anchor="middle">Cáp #2: +5 V riêng cho MAX98357A · Board S3 cấp theo đầu vào đã xác minh của phiên bản board, không cấp kép qua USB-C và chân 5 V · 3V3 cho mic và TFT · tụ 220 µF + 100 nF sát MAX98357A · GND tín hiệu chung</text></svg>
+  </div>
+
+  <div class="card">
+    <h3>📋 Bảng GPIO chi tiết — Board 2</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>GPIO</th><th>Thiết bị</th><th>Chân linh kiện</th><th>Kiểu</th><th>Ghi chú</th></tr></thead>
+        <tbody>
+          <tr><td><b>4</b></td><td>🎙️ Mic INMP441</td><td>WS</td><td><span class="badge b-I2S">I2S</span></td><td>Word Select (L/R clock)</td></tr>
+          <tr><td><b>5</b></td><td>🎙️ Mic INMP441</td><td>SCK</td><td><span class="badge b-I2S">I2S</span></td><td>Bit clock</td></tr>
+          <tr><td><b>6</b></td><td>🎙️ Mic INMP441</td><td>SD</td><td><span class="badge b-I2S">I2S</span></td><td>Dữ liệu âm thanh vào</td></tr>
+          <tr><td><b>8</b></td><td>📺 TFT ST7735</td><td>CS</td><td><span class="badge b-SPI">SPI</span></td><td>Chip Select</td></tr>
+          <tr><td><b>9</b></td><td>📺 TFT ST7735</td><td>RST</td><td><span class="badge b-SPI">SPI</span></td><td>Reset màn hình</td></tr>
+          <tr><td><b>10</b></td><td>📺 TFT ST7735</td><td>DC</td><td><span class="badge b-SPI">SPI</span></td><td>Data/Command</td></tr>
+          <tr><td><b>11</b></td><td>📺 TFT ST7735</td><td>MOSI</td><td><span class="badge b-SPI">SPI</span></td><td>Dữ liệu hiển thị</td></tr>
+          <tr><td><b>12</b></td><td>📺 TFT ST7735</td><td>SCK</td><td><span class="badge b-SPI">SPI</span></td><td>Xung clock SPI</td></tr>
+          <tr><td><b>15</b></td><td>🔊 Amp MAX98357A</td><td>DIN</td><td><span class="badge b-I2S">I2S</span></td><td>Dữ liệu âm thanh ra</td></tr>
+          <tr><td><b>16</b></td><td>🔊 Amp MAX98357A</td><td>BCLK</td><td><span class="badge b-I2S">I2S</span></td><td>Bit clock</td></tr>
+          <tr><td><b>17</b></td><td>🔊 Amp MAX98357A</td><td>LRC</td><td><span class="badge b-I2S">I2S</span></td><td>Left/Right clock</td></tr>
+          <tr><td><b>18</b></td><td>📺 TFT ST7735</td><td>BLK</td><td><span class="badge b-Output">Output</span></td><td>Đèn nền màn hình</td></tr>
+          <tr><td><b>48</b></td><td>🌈 LED RGB WS2812</td><td>DATA</td><td><span class="badge b-Onboard">Onboard</span></td><td>Có sẵn trên board</td></tr>
+          <tr><td><b>0</b></td><td>⏺️ Nút BOOT</td><td>—</td><td><span class="badge b-Onboard">Onboard</span></td><td>Có sẵn trên board</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧰 Danh sách linh kiện — Board 2</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Linh kiện</th><th>SL</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>ESP32-S3 N16R8 (XiaoZhi AI)</td><td>1</td></tr>
+          <tr><td>2</td><td>Mic I2S INMP441</td><td>1</td></tr>
+          <tr><td>3</td><td>Amp I2S MAX98357A</td><td>1</td></tr>
+          <tr><td>4</td><td>Loa 4Ω/3W</td><td>1</td></tr>
+          <tr><td>5</td><td>Màn TFT 1.8" ST7735 (SPI)</td><td>1</td></tr>
+          <tr><td>6</td><td>Cáp USB cắt dây #2 (đỏ +5V, đen GND) + đầu sạc ≥2A</td><td>1</td></tr>
+          <tr><td>7</td><td>LED RGB WS2812 + nút BOOT</td><td>—</td></tr>
+          <tr><td>8</td><td>Dây jumper, vỏ hộp loa</td><td>1</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="note danger">
+    <b>⛔ NGUỒN CHO AMP:</b> Board ESP32-S3 <b>không có chân 5V trên header</b> — amp MAX98357A lấy 5V từ ray của cáp USB #2 cắt dây (dây đỏ đứt nét trên sơ đồ). Nếu cấp amp bằng 3V3: loa rất nhỏ hoặc méo tiếng. GND của amp phải nối chung với GND board.
+  </div>
+  <div class="note ok">
+    <b>✅ MẸO:</b> Mic INMP441 chân L/R nối GND để chọn kênh trái. Chân OUT của loa tuyệt đối không được chạm GND (amp kiểu BTL — chạm là cháy amp). Board 2 nạp firmware qua cổng USB-C; khi chạy có thể cấp 5V từ cáp #2 (chân 5V) hoặc cổng USB-C.
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 4: BẢNG KẾT NỐI ══════════════════ -->
+<section class="tab-panel" id="tab4">
+  <h2 class="panel-title">🔌 Bảng Kết Nối Tra Cứu Nhanh</h2>
+  <p class="panel-desc">Gõ từ khóa để tìm, lọc theo board hoặc loại tín hiệu, click tiêu đề cột để sắp xếp.</p>
+
+  <div class="filters no-print">
+    <input type="text" id="connSearch" placeholder="Tìm theo GPIO, tên linh kiện hoặc chân kết nối" oninput="renderConn()">
+    <select id="connBoard" onchange="renderConn()">
+      <option value="0">📟 Tất cả board</option>
+      <option value="1">Board 1 — ESP32</option>
+      <option value="2">Board 2 — ESP32-S3</option>
+    </select>
+    <select id="connType" onchange="renderConn()">
+      <option value="">🏷️ Tất cả loại</option>
+      <option>Input</option><option>Output</option><option>PWM</option>
+      <option>I2C</option><option>SPI</option><option>I2S</option>
+      <option>Analog</option><option>Digital</option><option>Onboard</option>
+    </select>
+  </div>
+
+  <div class="filters no-print" style="margin-top:0">
+    <button class="btn btn-grad" type="button" onclick="copyTable()">📋 Sao chép bảng kết nối đang hiển thị</button>
+    <span id="copyStatus" class="panel-desc" role="status" aria-live="polite" style="margin:0"></span>
+  </div>
+
+  <div class="table-wrap">
+    <table id="connTable">
+      <thead>
+        <tr>
+          <th onclick="sortConn(0)">STT ⇅</th>
+          <th onclick="sortConn(1)">Board ⇅</th>
+          <th onclick="sortConn(2)">GPIO ⇅</th>
+          <th onclick="sortConn(3)">Linh kiện ⇅</th>
+          <th onclick="sortConn(4)">Chân linh kiện ⇅</th>
+          <th onclick="sortConn(5)">Màu dây ⇅</th>
+          <th onclick="sortConn(6)">Loại ⇅</th>
+        </tr>
+      </thead>
+      <tbody id="connBody"></tbody>
+    </table>
+  </div>
+  <p class="panel-desc" id="connCount" style="margin-top:10px"></p>
+
+  <div class="note">
+    <b>💡 MÀU DÂY THỰC TẾ:</b> Nên dùng đúng màu dây như bảng để dễ kiểm tra: đỏ = 5V, cam = 3V3, đen = GND, xanh dương = tín hiệu số, vàng = PWM servo, xanh lá = I2C, nâu = analog, tím = I2S, trắng = SPI. Dây nguồn (5V/GND) cho servo, relay, amp nên dùng dây tiết diện lớn hơn.
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 5: LẮP RÁP ══════════════════ -->
+<section class="tab-panel" id="tab5">
+  <h2 class="panel-title">🛠️ Hướng Dẫn Lắp Ráp Từng Bước</h2>
+  <p class="panel-desc">Làm theo đúng thứ tự 12 bước. Tick vào ô khi hoàn thành từng bước — tiến độ được lưu lại tự động.</p>
+  <div id="stepsWrap">
+
+    <div class="step"><div class="step-num">1</div><div class="step-body">
+      <h4>🧰 Chuẩn bị dụng cụ</h4>
+      <p>Mỏ hàn, thiếc, kìm, tuốc nơ vít, đồng hồ vạn năng, dây jumper đực-cái/đực-đực, băng keo điện, ống co nhiệt. Kiểm tra đủ 33 nhóm linh kiện theo danh sách ở Tab 2 và Tab 3 trước khi bắt đầu.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="6" y="14" width="90" height="26" rx="5" class="cbox"/><text x="51" y="32" class="tx" font-size="12" text-anchor="middle">🧰 Dụng cụ</text><rect x="120" y="14" width="94" height="26" rx="5" class="cbox"/><text x="167" y="32" class="tx" font-size="12" text-anchor="middle">41 linh kiện</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="1"> ✅ Đã xong bước 1</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">2</div><div class="step-body">
+      <h4>🔩 Hàn header cho board</h4>
+      <p>Hàn header đực cho ESP32 DevKit V1 và ESP32-S3. Cắm thử lên breadboard trước khi hàn để header thẳng. Kiểm tra không có mối hàn chạm nhau bằng đồng hồ (thang thông mạch).</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="40" y="8" width="140" height="38" rx="6" class="cbox"/><line x1="60" y1="8" x2="60" y2="46" class="wire wspi" style="stroke-width:1"/><line x1="80" y1="8" x2="80" y2="46" class="wire wspi" style="stroke-width:1"/><line x1="100" y1="8" x2="100" y2="46" class="wire wspi" style="stroke-width:1"/><line x1="120" y1="8" x2="120" y2="46" class="wire wspi" style="stroke-width:1"/><line x1="140" y1="8" x2="140" y2="46" class="wire wspi" style="stroke-width:1"/><line x1="160" y1="8" x2="160" y2="46" class="wire wspi" style="stroke-width:1"/></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="2"> ✅ Đã xong bước 2</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">3</div><div class="step-body">
+      <h4>⚡ Đấu nguồn + GND chung</h4>
+      <p>Cáp USB #1 cắt dây: dây đỏ → rail 5V, dây đen → rail GND (cắt bỏ dây trắng/xanh lá, bọc cách điện). Nối VIN của ESP32 vào rail 5V, GND board vào rail GND. <b>Tất cả thiết bị phải chung GND.</b> Đo lại rail = 5.0–5.2V trước khi cắm board.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><line x1="10" y1="16" x2="210" y2="16" class="wire w5v"/><line x1="10" y1="40" x2="210" y2="40" class="wire wgnd"/><text x="12" y="12" class="tx" font-size="10" fill="var(--w5v,#ef4444)">5V</text><text x="12" y="52" class="tx" font-size="10" fill="var(--wgnd,#94a3b8)">GND</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="3"> ✅ Đã xong bước 3</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">4</div><div class="step-body">
+      <h4>🎛️ Cắm tụ lọc</h4>
+      <p>Tụ 470µF/16V cắm ngay rail nguồn đầu vào và ngay chỗ cấp 5V cho 2 servo. <b>Chú ý cực tính:</b> chân dài (+) vào 5V, chân ngắn (−, vạch trắng) vào GND. Cắm ngược tụ sẽ phồng/nổ.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><line x1="96" y1="12" x2="96" y2="26" class="wire w5v"/><line x1="90" y1="26" x2="102" y2="26" class="wire wspi" style="stroke-width:3"/><line x1="90" y1="34" x2="102" y2="34" class="wire wspi" style="stroke-width:3"/><line x1="96" y1="34" x2="96" y2="48" class="wire wgnd"/><text x="112" y="32" class="tx" font-size="11">470µF</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="4"> ✅ Đã xong bước 4</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">5</div><div class="step-body">
+      <h4>📟 Đấu LCD I2C</h4>
+      <p>LCD VCC → 5V, GND → GND, SDA → GPIO21 (dây xanh lá), SCL → GPIO22 (dây xanh lá). Nạp code mở Serial Monitor: nếu LCD không sáng, chỉnh biến trở tương phản sau module I2C và kiểm tra địa chỉ 0x27.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="60" y="8" width="100" height="38" rx="5" class="cbox"/><rect x="68" y="14" width="84" height="18" rx="3" fill="#1d4ed8" opacity=".5"/><text x="110" y="42" class="tx" font-size="10" text-anchor="middle">SDA·SCL → 21·22</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="5"> ✅ Đã xong bước 5</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">6</div><div class="step-body">
+      <h4>🌡️ Đấu DHT11 + MQ-2</h4>
+      <p>DHT11: VCC → 3V3, GND → GND, DATA → GPIO4. MQ-2: VCC → 5V, GND → GND, AO → <b>qua chia áp</b> → GPIO33. MQ-2 cần làm nóng 120 giây lúc mở máy — không coi số đo giai đoạn này là dữ liệu ổn định.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="20" y="10" width="70" height="34" rx="5" class="cbox"/><text x="55" y="31" class="tx" font-size="11" text-anchor="middle">DHT11→G4</text><circle cx="150" cy="27" r="16" class="cbox"/><text x="188" y="31" class="tx" font-size="11">MQ-2→G33</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="6"> ✅ Đã xong bước 6</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">7</div><div class="step-body">
+      <h4>🔥 Đấu Flame + Rain + LDR</h4>
+      <p>Cảm biến lửa: DO → GPIO34. Cảm biến mưa: DO → GPIO36. LDR: DO → GPIO39. Cả 3 đều là chân chỉ nhận tín hiệu: cảm biến lửa LOW = có lửa, cảm biến mưa LOW = mưa, còn LDR được firmware v11.6 cấu hình HIGH = tối (`LDR_TOI_LA_HIGH = 1`). Chỉnh biến trở và xác minh mức DO của module bằng quan sát trạng thái thực tế; nếu module cho cực tính ngược, cần đổi cấu hình cho khớp trước khi vận hành.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="14" y="12" width="56" height="30" rx="5" class="cbox"/><text x="42" y="31" class="tx" font-size="11" text-anchor="middle">🔥 G34</text><rect x="82" y="12" width="56" height="30" rx="5" class="cbox"/><text x="110" y="31" class="tx" font-size="11" text-anchor="middle">🌧️ G36</text><rect x="150" y="12" width="56" height="30" rx="5" class="cbox"/><text x="178" y="31" class="tx" font-size="11" text-anchor="middle">💡 G39</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="7"> ✅ Đã xong bước 7</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">8</div><div class="step-body">
+      <h4>📡 Đấu SR04 + 2 Servo</h4>
+      <p>HC-SR04: VCC → 5V, TRIG ← GPIO32, ECHO → <b>chia áp 1kΩ+2kΩ</b> → GPIO35. Servo: dây vàng/tín hiệu → GPIO23 (cửa) và GPIO27 (phơi), dây đỏ → 5V riêng có tụ, dây nâu/đen → GND. Tuyệt đối không cấp servo từ 3V3.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><circle cx="30" cy="22" r="9" class="cbox"/><circle cx="52" cy="22" r="9" class="cbox"/><text x="41" y="48" class="tx" font-size="10" text-anchor="middle">SR04</text><line x1="90" y1="20" x2="130" y2="20" class="wire wpwm"/><text x="110" y="14" class="tx" font-size="10" text-anchor="middle">G23·G27</text><rect x="140" y="10" width="60" height="30" rx="5" class="cbox"/><text x="170" y="29" class="tx" font-size="10" text-anchor="middle">2 servo</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="8"> ✅ Đã xong bước 8</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">9</div><div class="step-body">
+      <h4>🔁 Đấu Relay + Còi + 3 LED</h4>
+      <p>Relay: IN ← GPIO26, JD-VCC ← 5V riêng (tháo jumper), GND → GND; quạt 5V DC: COM → 5V, NO → (+) quạt, (−) quạt → GND. Còi: (+) ← GPIO14, (−) → GND. LED: GPIO19/18/5 → trở 220Ω → Anode LED, Cathode → GND.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="14" y="12" width="60" height="32" rx="5" class="cbox"/><circle cx="24" cy="22" r="4" fill="var(--w5v,#ef4444)"/><text x="48" y="31" class="tx" font-size="10" text-anchor="middle">Relay G26</text><circle cx="110" cy="27" r="14" class="cbox"/><text x="110" y="31" class="tx" font-size="9" text-anchor="middle">Còi G14</text><circle cx="160" cy="27" r="9" fill="#7f1d1d" class="cbox"/><circle cx="184" cy="27" r="9" fill="#713f12" class="cbox"/><circle cx="206" cy="27" r="9" fill="#334155" class="cbox"/></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="9"> ✅ Đã xong bước 9</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">10</div><div class="step-body">
+      <h4>🆘 Đấu nút nhấn khẩn cấp</h4>
+      <p>Một chân nút → GPIO25, chân còn lại → GND. Firmware dùng INPUT_PULLUP nên không cần trở ngoài. Nhấn thử: còi phải kêu khẩn cấp và servo đóng vị trí an toàn.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="80" y="10" width="60" height="34" rx="5" class="cbox"/><circle cx="110" cy="27" r="8" class="cbox" fill="#7f1d1d"/><text x="110" y="52" class="tx" font-size="10" text-anchor="middle">GPIO25 + GND</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="10"> ✅ Đã xong bước 10</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">11</div><div class="step-body">
+      <h4>🎙️ Board 2: Mic + Amp + Loa</h4>
+      <p>INMP441: WS→G4, SCK→G5, SD→G6, VDD→3V3, GND→GND, L/R→GND. MAX98357A: DIN→G15, BCLK→G16, LRC→G17, <b>VIN→rail 5V của cáp USB #2</b>, GND→GND chung. Loa 4Ω/3W → OUT+/OUT− (không chạm GND).</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><circle cx="34" cy="27" r="15" class="cbox" fill="#713f12"/><line x1="60" y1="27" x2="100" y2="27" class="wire wi2s"/><rect x="104" y="12" width="60" height="30" rx="5" class="cbox"/><text x="134" y="31" class="tx" font-size="10" text-anchor="middle">MAX98357A</text><circle cx="196" cy="27" r="16" class="cbox"/><circle cx="196" cy="27" r="7" class="cbox"/></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="11"> ✅ Đã xong bước 11</label>
+    </div></div>
+
+    <div class="step"><div class="step-num">12</div><div class="step-body">
+      <h4>📺 Board 2: TFT 1.8"</h4>
+      <p>ST7735: CS→G8, RST→G9, DC→G10, MOSI→G11, SCK→G12, BLK→G18, VCC→3V3, GND→GND. Sau khi cấp nguồn, màn phải hiện gương mặt AI XiaoZhi. Nếu màn trắng: kiểm tra lại CS/DC/RST và dây MOSI.</p>
+      <svg class="mini" viewBox="0 0 220 54" width="220"><rect x="60" y="6" width="100" height="42" rx="5" class="cbox"/><rect x="68" y="12" width="84" height="24" rx="3" fill="#1d4ed8" opacity=".5"/><circle cx="96" cy="24" r="4" fill="#e2e8f0"/><circle cx="124" cy="24" r="4" fill="#e2e8f0"/><text x="110" y="46" class="tx" font-size="9" text-anchor="middle">G8·G9·G10·G11·G12·G18</text></svg>
+      <label class="step-check"><input type="checkbox" class="step-cb" data-step="12"> ✅ Đã xong bước 12</label>
+    </div></div>
+  </div>
+</section>
+
+<!-- ══════════════════ TAB 6: CHECKLIST ══════════════════ -->
+<section class="tab-panel" id="tab6">
+  <h2 class="panel-title">✅ Checklist Kiểm Tra Sau Lắp Ráp</h2>
+  <p class="panel-desc">Tick từng mục sau khi kiểm tra thực tế. Tiến độ tự lưu vào trình duyệt.</p>
+
+  <div class="card">
+    <h3>📈 Tiến độ: <span id="chkLabel">Đã hoàn thành 0/30 mục</span></h3>
+    <div class="prog"><div class="prog-bar" id="chkBar"></div></div>
+    <button class="btn btn-grad no-print" style="margin-top:10px" onclick="resetChk()">🔄 Reset checklist</button>
+  </div>
+  <div id="chkWrap"></div>
+</section>
+
+<!-- ══════════════════ TAB 7: TROUBLESHOOTING ══════════════════ -->
+<section class="tab-panel" id="tab7">
+  <h2 class="panel-title">🚨 Sửa Lỗi Thường Gặp</h2>
+  <p class="panel-desc">Click vào từng lỗi để mở nguyên nhân và cách sửa.</p>
+  <div id="accWrap">
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🔌 ESP32 không nhận cổng COM <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Cắm USB nhưng máy tính không thấy cổng COM.</p>
+      <p><b>Nguyên nhân:</b> Thiếu driver CH340/CP2102; cáp USB chỉ sạc không có dữ liệu; cổng USB lỏng.</p>
+      <p><b>Cách sửa:</b> Cài driver CH340 hoặc CP210x; đổi cáp USB có dây data; thử cổng USB khác; với ESP32-S3 dùng đúng cổng USB-C CDC.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🦾 Servo giật, ESP32 bị reset <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Servo quay giật cục, board tự khởi động lại, LCD nhấp nháy.</p>
+      <p><b>Nguyên nhân:</b> Servo ăn dòng lớn làm sụt nguồn; cấp servo từ chân 3V3; thiếu tụ lọc.</p>
+      <p><b>Cách sửa:</b> Cấp 5V riêng cho servo (dây to), thêm tụ 470µF sát chân servo, kiểm tra GND chung chắc chắn.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🔁 Relay kêu tạch tạch liên tục <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Tiếng tạch tạch lặp lại, quạt bật tắt liên tục.</p>
+      <p><b>Nguyên nhân:</b> Nguồn relay yếu; nhiễu từ dây nguồn quạt; dây IN lỏng.</p>
+      <p><b>Cách sửa:</b> Cấp JD-VCC bằng 5V riêng (tháo jumper), siết lại dây IN từ GPIO26, thêm tụ 100µF sát VCC relay, giữ dây tín hiệu xa dây nguồn quạt.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">📟 LCD không hiển thị <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> LCD sáng đèn nền nhưng không có chữ, hoặc tắt ngóm.</p>
+      <p><b>Nguyên nhân:</b> Sai địa chỉ I2C (0x27/0x3F); tương phản chưa chỉnh; đảo SDA/SCL; thiếu 5V.</p>
+      <p><b>Cách sửa:</b> Chạy I2C scanner xác nhận địa chỉ; vặn biến trở xanh sau module I2C; kiểm tra SDA→GPIO21, SCL→GPIO22, VCC=5V.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🌡️ DHT11 đọc NaN <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Nhiệt độ/độ ẩm hiện NaN hoặc 0.</p>
+      <p><b>Nguyên nhân:</b> Dây DATA lỏng; thiếu trở kéo lên 10kΩ (bản cảm biến rời); đọc quá nhanh.</p>
+      <p><b>Cách sửa:</b> Kiểm tra DATA→GPIO4; thêm trở 10kΩ giữa DATA và VCC nếu dùng cảm biến rời; DHT11 chỉ đọc tối đa 1 lần/2 giây.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🧪 MQ-2 đọc nhảy loạn <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Giá trị gas dao động mạnh, báo động giả.</p>
+      <p><b>Nguyên nhân:</b> Chưa làm nóng đủ 120 giây; nguồn 5V nhiễu; chia áp chân AO chưa đúng.</p>
+      <p><b>Cách sửa:</b> Chờ hết 120 giây làm nóng và hiệu chuẩn; cấp MQ-2 đúng 5V có tụ lọc; kiểm tra lại cầu chia áp AO→GPIO33; để cảm biến xa hơi servo/relay.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">⚡ Relay tự bật ngay khi cắm dây IN <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Vừa cắm dây IN vào GPIO26 là relay hút, quạt chạy.</p>
+      <p><b>Nguyên nhân:</b> Đây là relay kích mức LOW — GPIO đang ở mức LOW khi khởi động.</p>
+      <p><b>Cách sửa:</b> Bình thường, không hỏng: firmware đã set GPIO26 HIGH ngay trong setup. Nếu vẫn bị lâu, thêm trở kéo lên 10kΩ từ IN lên 5V của module.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🆘 Nút nhấn không phản hồi <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Nhấn nút khẩn cấp nhưng không có gì xảy ra.</p>
+      <p><b>Nguyên nhân:</b> Đấu nhầm 2 chân cùng phía nút 4 chân; dây GND lỏng; firmware đang ở trạng thái ưu tiên cao hơn.</p>
+      <p><b>Cách sửa:</b> Dùng đồng hồ đo thông mạch chọn đúng 2 chân chéo của nút; kiểm tra GPIO25 và GND; nhấn giữ >1 giây thử lại.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">📶 WiFi không kết nối <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Serial báo lỗi WiFi, board không online.</p>
+      <p><b>Nguyên nhân:</b> Router 5GHz (ESP32 chỉ hỗ trợ 2.4GHz); sai tên/mật khẩu WiFi; nguồn yếu.</p>
+      <p><b>Cách sửa:</b> Bật băng 2.4GHz trên router; kiểm tra lại SSID/mật khẩu trong code; cấp nguồn đủ 5V/2A trở lên.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">☁️ Blynk không kết nối <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> WiFi đã có nhưng app Blynk báo offline.</p>
+      <p><b>Nguyên nhân:</b> Sai Auth Token; sai Template ID; chưa nhấn ▶ trong app.</p>
+      <p><b>Cách sửa:</b> Copy lại BLYNK_AUTH_TOKEN từ email/app vào code; kiểm tra Template ID khớp; mở app và nhấn nút play; xem Serial để biết lỗi cụ thể.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">📺 TFT 1.8" không hiển thị <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Màn trắng tinh hoặc đen, không thấy mặt AI.</p>
+      <p><b>Nguyên nhân:</b> Đảo MOSI/SCK; sai CS/DC/RST; VCC cấp nhầm 5V (một số module chỉ chịu 3V3); chân BLK chưa cấp.</p>
+      <p><b>Cách sửa:</b> Kiểm tra từng dây: CS→G8, RST→G9, DC→G10, MOSI→G11, SCK→G12, BLK→G18; VCC→3V3; hàn lại mối hàn lỏng trên header TFT.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🎙️ Mic không thu âm <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Nói vào mic nhưng XiaoZhi không nghe thấy.</p>
+      <p><b>Nguyên nhân:</b> Chân L/R của INMP441 để trống; sai thứ tự WS/SCK/SD; VDD cấp nhầm 5V.</p>
+      <p><b>Cách sửa:</b> Nối L/R→GND; kiểm tra WS→G4, SCK→G5, SD→G6; VDD đúng 3V3; sờ nhẹ mặt mic — nếu nóng là đấu sai nguồn, rút điện ngay.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🔊 Amp không phát tiếng <span class="arrow">▶</span></button>
+      <div class="acc-body"><p><b>Triệu chứng:</b> Loa im lìm hoặc rè nhỏ.</p>
+      <p><b>Nguyên nhân:</b> Amp cấp nhầm 3V3 thay vì 5V riêng; GND amp không chung với board; loa chạm GND; sai DIN/BCLK/LRC.</p>
+      <p><b>Cách sửa:</b> Cấp VIN=5V từ rail cáp USB #2 (dây đỏ đứt), thêm tụ 220µF + 100nF sát VIN; nối GND chung; loa chỉ nối OUT+/OUT−; kiểm tra DIN→G15, BCLK→G16, LRC→G17; chân SD của amp để trống hoặc kéo lên VIN.</p></div></div>
+
+    <div class="acc-item"><button class="acc-head" onclick="toggleAcc(this)">🔋 Sụt áp / reset khi dùng cáp USB cắt dây <span class="arrow">▶</span></button>
+    <div class="acc-body"><p><b>Triệu chứng:</b> Board reset khi servo hoặc loa chạy, LCD nhấp nháy, WiFi rớt.</p>
+      <p><b>Nguyên nhân:</b> Cáp mỏng, mối nối kém hoặc đầu sạc yếu làm sụt dưới 4,7V; dây trắng/xanh lá chạm nhau gây chập.</p>
+      <p><b>Cách sửa:</b> Đo 5V ngay tại VIN lúc tải nặng; dùng đầu sạc ≥2A và cáp ngắn dây dày; hàn chắc mối nối; thêm tụ 470–1000µF sát servo; kiểm tra dây data đã bọc cách điện.</p></div></div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════ TAB 8: BUZZER VÀ NGƯỠNG ══════════════════ -->
+<section class="tab-panel" id="tab8">
+  <h2 class="panel-title">⚡ Còi báo động, ngưỡng tự động và ưu tiên xử lý</h2>
+  <p class="panel-desc">Các thông số dưới đây được đối chiếu với firmware Board 1 v11.6 NoDF. Ngưỡng MQ-2 là số đọc ADC của module, không phải nồng độ khí theo đơn vị ppm đã hiệu chuẩn.</p>
+
+  <div class="card">
+    <h3>🔔 Bốn chế độ còi</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Chế độ</th><th>Thời gian bật</th><th>Thời gian tắt</th><th>Quy tắc</th></tr></thead>
+      <tbody>
+        <tr><td>🔥 Cảnh báo lửa</td><td>300 mili giây</td><td>300 mili giây</td><td>Ưu tiên cao nhất trong nhóm cảnh báo còi</td></tr>
+        <tr><td>💨 Cảnh báo gas</td><td>150 mili giây</td><td>150 mili giây</td><td>Nhịp nhanh hơn chế độ lửa</td></tr>
+        <tr><td>🆘 Khẩn cấp</td><td>1000 mili giây</td><td>80 mili giây</td><td>Nhịp bật dài, khoảng nghỉ ngắn</td></tr>
+        <tr><td>🔔 Sự kiện</td><td>120 mili giây</td><td>120 mili giây</td><td>Dùng cho thông báo thao tác hoặc thay đổi trạng thái</td></tr>
+      </tbody>
+    </table></div>
+    <p class="panel-desc" style="margin-top:10px">Số nhịp sự kiện: bắt đầu mưa 3 bíp; mưa tạnh 2 bíp; trời tối làm đèn sân tự bật 1 bíp; mở hoặc đóng cửa, bật hoặc tắt quạt 1 bíp. Hàng đợi sự kiện không được lấn át báo động lửa, gas hoặc khẩn cấp.</p>
+  </div>
+
+  <div class="card">
+    <h3>🌡️ Nhiệt độ và relay quạt</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Thông số</th><th>Giá trị firmware</th><th>Ý nghĩa</th></tr></thead>
+      <tbody>
+        <tr><td>Ngưỡng tự bật quạt</td><td>35,0 °C</td><td>Khi quạt đang tắt, nhiệt độ đạt ngưỡng thì firmware có thể yêu cầu bật quạt</td></tr>
+        <tr><td>Ngưỡng tắt quạt</td><td>33,0 °C</td><td>Khi quạt đang bật, dùng ngưỡng thấp hơn để tạo vùng trễ</td></tr>
+        <tr><td>Thời gian chạy tiếp</td><td>10 giây</td><td>Quạt có thể tiếp tục chạy sau khi điều kiện bật không còn</td></tr>
+        <tr><td>Thời lượng relay tối đa</td><td>120 giây</td><td>Giới hạn bảo vệ do firmware đặt; không thay thế cầu chì hay bảo vệ phần cứng</td></tr>
+        <tr><td>Relay</td><td>GPIO26, kích mức LOW</td><td>IN = LOW thì relay kích; IN = HIGH thì relay nhả</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3>🧪 MQ-2 — làm nóng, hiệu chuẩn và ngưỡng</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Thông số</th><th>Giá trị</th><th>Ghi chú</th></tr></thead>
+      <tbody>
+        <tr><td>Thời gian làm nóng ban đầu</td><td>120 giây</td><td>Trong giai đoạn này không xem dữ liệu là số đo ổn định để báo người dùng</td></tr>
+        <tr><td>Ngưỡng cảnh báo tĩnh</td><td>1000 ADC</td><td>Dùng như ngưỡng dự phòng khi hiệu chuẩn không đáng tin cậy</td></tr>
+        <tr><td>Ngưỡng nguy hiểm tĩnh</td><td>1350 ADC</td><td>Dùng như ngưỡng dự phòng khi hiệu chuẩn không đáng tin cậy</td></tr>
+        <tr><td>Ngưỡng xóa cảnh báo tĩnh</td><td>870 ADC</td><td>Ngưỡng làm sạch trạng thái báo gas trong cơ chế tĩnh</td></tr>
+        <tr><td>Ngưỡng cảnh báo thích nghi</td><td>Đường nền + 400</td><td>Đường nền được ước lượng và giới hạn theo firmware</td></tr>
+        <tr><td>Ngưỡng nguy hiểm thích nghi</td><td>Đường nền + 800</td><td>Firmware còn áp dụng hàng rào ngưỡng tĩnh khi đường nền thấp</td></tr>
+        <tr><td>Ngưỡng xóa thích nghi</td><td>Đường nền + 200</td><td>Dùng độ trễ để tránh chập chờn quanh một ngưỡng</td></tr>
+        <tr><td>Giới hạn đường nền</td><td>20 đến 700 ADC</td><td>Giá trị đọc phải nằm trong miền hợp lệ; ADC có thể bị ảnh hưởng bởi nguồn và mạch chia áp</td></tr>
+        <tr><td>Xác nhận lỗi cảm biến</td><td>10 giây</td><td>Lỗi đầu vào cần được xác nhận trước khi chuyển trạng thái</td></tr>
+        <tr><td>Phát hiện số đo bị kẹt</td><td>60 giây</td><td>Chỉ là chẩn đoán phần mềm, không phải chứng nhận cảm biến đạt chuẩn an toàn</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note danger"><b>⛔ Điện áp ADC:</b> Không nối trực tiếp ngõ AO có thể lên 5 V của MQ-2 vào GPIO33. Cầu chia áp theo tài liệu là điện trở 10 kΩ nối tiếp từ AO tới nút GPIO33, điện trở 20 kΩ từ nút GPIO33 xuống GND. Hãy đo điện áp thực tế trước khi nối vào ESP32.</div>
+  </div>
+
+  <div class="card">
+    <h3>🔥 Cảm biến lửa, mưa và ánh sáng</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Khối</th><th>Tham số trong firmware</th><th>Diễn giải</th></tr></thead>
+      <tbody>
+        <tr><td>Cảm biến lửa GPIO34</td><td>LOW = có lửa; điểm cảnh báo 50 trên thang tối đa 60; xác nhận 2 nhịp cập nhật</td><td>GPIO34 chỉ nhận tín hiệu vào; đầu ra DO của module cần tương thích 3,3 V</td></tr>
+        <tr><td>Xóa cảnh báo lửa</td><td>5 giây</td><td>Chỉ xóa sau khi điều kiện hết lửa được duy trì đủ thời gian</td></tr>
+        <tr><td>Phát hiện đầu ra lửa bị kẹt</td><td>600 giây</td><td>Firmware theo dõi trạng thái bất thường kéo dài</td></tr>
+        <tr><td>Cảm biến mưa GPIO36</td><td>LOW = mưa; ướt xác nhận 3 giây; khô xác nhận 10 giây</td><td>Khoảng hủy ướt ngắn là 800 mili giây</td></tr>
+        <tr><td>LM393 LDR GPIO39</td><td>HIGH = tối theo cấu hình `LDR_TOI_LA_HIGH = 1` trong firmware v11.6</td><td>Một số module có cực tính ngược; xác minh mức DO thực tế. Nếu ngược, đổi hằng cấu hình hoặc điều chỉnh cách đấu để khớp.</td></tr>
+        <tr><td>GPIO34, GPIO35, GPIO36, GPIO39</td><td>Chân chỉ nhận tín hiệu vào</td><td>Không dùng làm đầu ra; không dựa vào điện trở kéo lên nội trên các chân này</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3>🚪 Cửa, giàn phơi và các bộ định thời</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Chức năng</th><th>Giá trị</th><th>Ghi chú</th></tr></thead>
+      <tbody>
+        <tr><td>Servo cửa mở / đóng</td><td>0° / 130°</td><td>GPIO23; nguồn servo 5 V riêng đủ dòng và chung GND tín hiệu</td></tr>
+        <tr><td>Servo giàn phơi ra / vào</td><td>0° / 90°</td><td>GPIO27; giàn phơi tự thu khi mưa theo trạng thái được xác nhận</td></tr>
+        <tr><td>Tự đóng cửa sau lần mở bình thường</td><td>120 giây</td><td>Thời gian đóng có thể khác theo nguyên nhân mở cửa</td></tr>
+        <tr><td>Cửa mở do cảnh báo gas</td><td>300 giây</td><td>Không được coi đây là phương án thay thế việc rời khỏi khu vực nguy hiểm</td></tr>
+        <tr><td>Cửa theo HC-SR04</td><td>Phát hiện tay ở gần 7 cm; nhả ở khoảng 10 cm; thời gian tự đóng 15 giây</td><td>Cần lắp cảm biến ổn định, tránh vật cản cố định trước cảm biến</td></tr>
+        <tr><td>Hết thời gian điều khiển thủ công</td><td>60 giây</td><td>Trở lại logic tự động khi điều kiện cho phép</td></tr>
+        <tr><td>Đặt lại trạng thái khẩn cấp</td><td>60 giây</td><td>Theo logic xác nhận và reset của firmware</td></tr>
+        <tr><td>Kiểm tra dữ liệu cảm biến cũ</td><td>30 giây</td><td>Dữ liệu quá hạn có thể bị đánh dấu là không còn mới</td></tr>
+        <tr><td>Thử kết nối lại Wi-Fi</td><td>30 giây</td><td>Mất kết nối không đồng nghĩa chức năng tự động cục bộ dừng</td></tr>
+        <tr><td>Thử kết nối lại Blynk</td><td>15 giây</td><td>Cần token hợp lệ và kết nối Internet</td></tr>
+        <tr><td>Thử kết nối lại MCP</td><td>90 giây</td><td>Điều khiển giọng nói từ xa cần endpoint và token hợp lệ</td></tr>
+        <tr><td>Watchdog tác vụ</td><td>25 giây</td><td>Cơ chế phục hồi phần mềm, không thay thế thiết kế an toàn phần cứng</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3>🛡️ Thứ tự ưu tiên xử lý</h3>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:12px 0">
+      <span style="background:#ef4444;color:#fff;padding:9px 13px;border-radius:9px;font-weight:700">1. FIRE — Lửa</span><span aria-hidden="true">›</span>
+      <span style="background:#f97316;color:#fff;padding:9px 13px;border-radius:9px;font-weight:700">2. GAS — Gas</span><span aria-hidden="true">›</span>
+      <span style="background:#dc2626;color:#fff;padding:9px 13px;border-radius:9px;font-weight:700">3. EMERGENCY — Khẩn cấp</span><span aria-hidden="true">›</span>
+      <span style="background:#2563eb;color:#fff;padding:9px 13px;border-radius:9px;font-weight:700">4. RAIN — Mưa</span><span aria-hidden="true">›</span>
+      <span style="background:#7c3aed;color:#fff;padding:9px 13px;border-radius:9px;font-weight:700">5. MANUAL — Thủ công</span><span aria-hidden="true">›</span>
+      <span style="background:#0891b2;color:#fff;padding:9px 13px;border-radius:9px;font-weight:700">6. AUTO — Tự động</span><span aria-hidden="true">›</span>
+      <span style="background:#16a34a;color:#fff;padding:9px 13px;border-radius:9px;font-weight:700">7. NORMAL — Bình thường</span>
+    </div>
+    <p>Thứ tự này mô tả ưu tiên trong firmware Board 1. Các lệnh thủ công có thể bị từ chối khi điều kiện an toàn không cho phép. Không dùng thử nghiệm với lửa thật hoặc khí dễ cháy để kiểm tra mô hình; hãy kiểm tra cảm biến bằng phương pháp an toàn và theo tài liệu của nhà sản xuất.</p>
+  </div>
+
+  <div class="card">
+    <h3>🧰 Vị trí điện trở và tụ điện</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Linh kiện phụ</th><th>Vị trí đấu</th><th>Mục đích</th></tr></thead>
+      <tbody>
+        <tr><td>Điện trở 10 kΩ kéo lên DHT11</td><td>DATA GPIO4 lên VCC phù hợp module</td><td>Chỉ cần với cảm biến rời hoặc module không có sẵn điện trở kéo lên</td></tr>
+        <tr><td>Điện trở 220 Ω cho từng LED</td><td>Nối tiếp từng LED sân GPIO5, LED ngủ GPIO18, LED khách GPIO19</td><td>Giới hạn dòng LED; không dùng chung một điện trở cho ba LED</td></tr>
+        <tr><td>Cầu chia áp 1 kΩ + 2 kΩ</td><td>HC-SR04 ECHO → 1 kΩ → GPIO35; GPIO35 → 2 kΩ → GND</td><td>Hạ xung ECHO 5 V xuống mức gần 3,3 V</td></tr>
+        <tr><td>Cầu chia áp 10 kΩ + 20 kΩ</td><td>MQ-2 AO → 10 kΩ → GPIO33; GPIO33 → 20 kΩ → GND</td><td>Hạ mức điện áp AO có thể lên 5 V</td></tr>
+        <tr><td>Tụ 470 µF</td><td>Sát đường nguồn servo / rail 5 V, đúng cực</td><td>Giảm sụt áp tức thời; không phải cách chữa nguồn thiếu dòng</td></tr>
+        <tr><td>Tụ 100 µF cho relay</td><td>Sát chân cấp nguồn module relay, đúng cực</td><td>Giảm nhiễu nguồn cục bộ nếu module và sơ đồ nguồn cho phép</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3>📝 Nhật ký hoàn thiện tài liệu: 12 điểm đã rà soát</h3>
+    <ol>
+      <li>Thống nhất tải được điều khiển là quạt 5 V DC, không đưa điện lưới vào sơ đồ.</li>
+      <li>Ghi rõ tiếp điểm relay: COM nối +5 V, NO nối cực dương quạt, cực âm quạt về GND.</li>
+      <li>Ghi rõ GPIO26 là relay kích mức LOW.</li>
+      <li>Ghi rõ cầu chia áp ECHO của HC-SR04 trước GPIO35.</li>
+      <li>Ghi rõ cầu chia áp AO của MQ-2 trước GPIO33.</li>
+      <li>Giữ GPIO16 và GPIO17 ở trạng thái không nối dây sau khi bỏ DFPlayer.</li>
+      <li>Sửa thời gian làm nóng MQ-2 thành 120 giây theo firmware.</li>
+      <li>Đồng bộ ngưỡng quạt 35 °C bật, 33 °C tắt và thời gian chạy tiếp 10 giây.</li>
+      <li>Phân biệt ngưỡng gas ADC tĩnh và ngưỡng tương đối theo đường nền.</li>
+      <li>Ghi đúng thời gian xác nhận mưa 3 giây, khô 10 giây và hủy ướt 800 mili giây.</li>
+      <li>Ghi đúng thời gian xóa cảnh báo lửa 5 giây, xác nhận 2 nhịp và theo dõi trạng thái kẹt.</li>
+      <li>Phân biệt chức năng độc lập cục bộ với tính năng cần Wi-Fi, Blynk hoặc MCP.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3>✨ Bốn điểm tiện ích được bổ sung hoặc củng cố</h3>
+    <ol>
+      <li>Tab 8 riêng cho còi, ngưỡng, ưu tiên xử lý và vị trí điện trở/tụ.</li>
+      <li>Nút sao chép bảng kết nối sau khi lọc và sắp xếp.</li>
+      <li>Lưu tiến độ checklist, 12 bước và giao diện sáng/tối an toàn hơn khi mở bằng tệp cục bộ.</li>
+      <li>Ghi chú nguồn tách biệt, nguy cơ điện áp logic và khả năng vận hành khi mất mạng rõ ràng hơn.</li>
+    </ol>
+  </div>
+</section>
+
+<script>
+/* Lưu trữ có kiểm tra lỗi: một số trình duyệt hạn chế localStorage khi mở file://. */
+function safeGetItem(key){ try { return window.localStorage.getItem(key); } catch(error) { return null; } }
+function safeSetItem(key, value){ try { window.localStorage.setItem(key, value); return true; } catch(error) { return false; } }
+function safeRemoveItem(key){ try { window.localStorage.removeItem(key); return true; } catch(error) { return false; } }
+function safeReadJSON(key, fallback){ const raw = safeGetItem(key); if(!raw) return fallback; try { return JSON.parse(raw); } catch(error) { return fallback; } }
+
+/* ═══ TAB ═══ */
+function showTab(id, btn){
+  const target = document.getElementById(id);
+  if(!target) return;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  target.classList.add('active');
+  const activeButton = btn || document.querySelector('.tab-btn[onclick*="' + id + '"]');
+  if(activeButton) activeButton.classList.add('active');
+}
+
+/* ═══ THEME ═══ */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themeBtn').textContent = (t==='dark') ? '🌙 Tối' : '☀️ Sáng';
+  safeSetItem('ntm_theme', t);
+}
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme');
+  applyTheme(cur==='dark' ? 'light' : 'dark');
+}
+
+/* ═══ ZOOM / TẢI SVG ═══ */
+const zoomLv = {};
+function zoomSvg(id, f){
+  const s = document.getElementById(id);
+  zoomLv[id] = (zoomLv[id]||1) * f;
+  zoomLv[id] = Math.min(3, Math.max(0.4, zoomLv[id]));
+  s.style.transform = 'scale(' + zoomLv[id] + ')';
+}
+function zoomReset(id){
+  zoomLv[id] = 1;
+  document.getElementById(id).style.transform = 'scale(1)';
+}
+function downloadSvg(id, name){
+  const s = document.getElementById(id).cloneNode(true);
+  s.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  s.style.transform = '';
+  const blob = new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n' + s.outerHTML], {type:'image/svg+xml'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ═══ TOOLTIP + HIGHLIGHT ═══ */
+const tip = document.getElementById('tooltip');
+document.addEventListener('mousemove', e=>{
+  const t = e.target.closest ? e.target.closest('[data-tip]') : null;
+  if(t){
+    tip.textContent = t.getAttribute('data-tip');
+    tip.style.display = 'block';
+    const w = tip.offsetWidth;
+    const h = tip.offsetHeight;
+    let x = e.clientX + 16;
+    let y = e.clientY + 14;
+    if(x + w > window.innerWidth - 8) x = e.clientX - w - 12;
+    if(x < 8) x = 8;
+    if(y + h > window.innerHeight - 8) y = e.clientY - h - 12;
+    if(y < 8) y = 8;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  } else tip.style.display = 'none';
+});
+document.addEventListener('click', e=>{
+  const el = e.target.closest ? e.target.closest('[data-dev]') : null;
+  document.querySelectorAll('svg.focused').forEach(s=>{
+    if(!el || !s.contains(el)){ s.classList.remove('focused'); s.querySelectorAll('.hl').forEach(x=>x.classList.remove('hl')); }
+  });
+  if(!el) return;
+  const dev = el.getAttribute('data-dev');
+if(dev==='board1'||dev==='board2') return;
+  const svg = el.closest('svg');
+  if(!svg) return;
+  const already = svg.classList.contains('focused') && el.classList.contains('hl');
+  svg.classList.remove('focused');
+  svg.querySelectorAll('.hl').forEach(x=>x.classList.remove('hl'));
+  if(already) return;
+  svg.classList.add('focused');
+  svg.querySelectorAll('[data-dev="'+dev+'"]').forEach(x=>x.classList.add('hl'));
+});
+
+/* ═══ TAB 4 — BẢNG KẾT NỐI ═══ */
+const connections = [
+  {board:1, gpio:4,  device:"DHT11", pin:"DATA", wire:"Xanh dương", type:"Digital"},
+  {board:1, gpio:5,  device:"LED Sân", pin:"Anode", wire:"Xanh dương", type:"Output"},
+  {board:1, gpio:14, device:"Buzzer", pin:"+", wire:"Xanh dương", type:"Output"},
+  {board:1, gpio:18, device:"LED Ngủ", pin:"Anode", wire:"Xanh dương", type:"Output"},
+  {board:1, gpio:19, device:"LED Khách", pin:"Anode", wire:"Xanh dương", type:"Output"},
+  {board:1, gpio:21, device:"LCD I2C", pin:"SDA", wire:"Xanh lá", type:"I2C"},
+  {board:1, gpio:22, device:"LCD I2C", pin:"SCL", wire:"Xanh lá", type:"I2C"},
+  {board:1, gpio:23, device:"Servo Cửa", pin:"Signal", wire:"Vàng", type:"PWM"},
+  {board:1, gpio:25, device:"Nút nhấn", pin:"1", wire:"Xanh dương", type:"Input"},
+  {board:1, gpio:26, device:"Relay Quạt", pin:"IN", wire:"Xanh dương", type:"Output"},
+  {board:1, gpio:27, device:"Servo Phơi", pin:"Signal", wire:"Vàng", type:"PWM"},
+  {board:1, gpio:32, device:"HC-SR04", pin:"TRIG", wire:"Xanh dương", type:"Output"},
+  {board:1, gpio:33, device:"MQ-2", pin:"AO (qua chia áp)", wire:"Nâu", type:"Analog"},
+  {board:1, gpio:34, device:"Flame", pin:"DO", wire:"Xanh dương", type:"Input"},
+  {board:1, gpio:35, device:"HC-SR04", pin:"ECHO (qua chia áp)", wire:"Xanh dương", type:"Input"},
+  {board:1, gpio:36, device:"Rain", pin:"DO", wire:"Xanh dương", type:"Input"},
+  {board:1, gpio:39, device:"LM393 LDR", pin:"DO", wire:"Xanh dương", type:"Input"},
+  {board:2, gpio:4,  device:"INMP441 Mic", pin:"WS", wire:"Tím", type:"I2S"},
+  {board:2, gpio:5,  device:"INMP441 Mic", pin:"SCK", wire:"Tím", type:"I2S"},
+  {board:2, gpio:6,  device:"INMP441 Mic", pin:"SD", wire:"Tím", type:"I2S"},
+  {board:2, gpio:8,  device:"TFT 1.8 ST7735", pin:"CS", wire:"Trắng", type:"SPI"},
+  {board:2, gpio:9,  device:"TFT 1.8 ST7735", pin:"RST", wire:"Trắng", type:"SPI"},
+  {board:2, gpio:10, device:"TFT 1.8 ST7735", pin:"DC", wire:"Trắng", type:"SPI"},
+  {board:2, gpio:11, device:"TFT 1.8 ST7735", pin:"MOSI", wire:"Trắng", type:"SPI"},
+  {board:2, gpio:12, device:"TFT 1.8 ST7735", pin:"SCK", wire:"Trắng", type:"SPI"},
+  {board:2, gpio:15, device:"MAX98357A", pin:"DIN", wire:"Tím", type:"I2S"},
+  {board:2, gpio:16, device:"MAX98357A", pin:"BCLK", wire:"Tím", type:"I2S"},
+  {board:2, gpio:17, device:"MAX98357A", pin:"LRC", wire:"Tím", type:"I2S"},
+  {board:2, gpio:18, device:"TFT 1.8 ST7735", pin:"BLK", wire:"Vàng", type:"Output"},
+  {board:2, gpio:48, device:"LED RGB WS2812", pin:"DATA", wire:"-", type:"Onboard"},
+  {board:2, gpio:0,  device:"Nút BOOT", pin:"-", wire:"-", type:"Onboard"}
+];
+const wireColor = {"Xanh dương":"#3b82f6","Vàng":"#eab308","Xanh lá":"#22c55e","Nâu":"#c2703d","Tím":"#a855f7","Trắng":"#e2e8f0","-":"transparent"};
+let connSort = {col:-1, asc:true};
+function sortConn(c){
+  if(connSort.col === c) connSort.asc = !connSort.asc; else connSort = {col:c, asc:true};
+  renderConn();
+}
+async function copyTable(){
+  const table = document.getElementById('connTable');
+  const status = document.getElementById('copyStatus');
+  if(!table) return;
+  const rows = Array.from(table.querySelectorAll('tr')).map(row =>
+    Array.from(row.querySelectorAll('th,td')).map(cell => cell.innerText.trim().replace(/\s+/g,' ')).join('\t')
+  ).join('\n');
+  try {
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(rows);
+    } else {
+      const area = document.createElement('textarea');
+      area.value = rows; area.setAttribute('readonly','');
+      area.style.position = 'fixed'; area.style.left = '-9999px';
+      document.body.appendChild(area); area.select();
+      const ok = document.execCommand('copy'); area.remove();
+      if(!ok) throw new Error('Trình duyệt không cho phép sao chép tự động.');
+    }
+    if(status) status.textContent = 'Đã sao chép bảng đang hiển thị.';
+  } catch(error) {
+    if(status) status.textContent = 'Không sao chép tự động được. Hãy bôi đen bảng rồi sao chép thủ công.';
+  }
+}
+function renderConn(){
+  const q = (document.getElementById('connSearch').value||'').toLowerCase();
+  const b = +document.getElementById('connBoard').value;
+  const t = document.getElementById('connType').value;
+  const keys = ['idx','board','gpio','device','pin','wire','type'];
+  let rows = connections.map((c,i)=>Object.assign({}, c, {idx:i+1}))
+    .filter(c => (!b || c.board===b) && (!t || c.type===t)
+      && (!q || (c.device+' '+c.pin+' gpio'+c.gpio+' board'+c.board+' '+c.wire).toLowerCase().includes(q)));
+  if(connSort.col >= 0){
+    const k = keys[connSort.col];
+    rows.sort((x,y)=> (x[k]===y[k] ? 0 : (x[k]>y[k] ? 1 : -1)) * (connSort.asc?1:-1));
+  }
+  document.getElementById('connBody').innerHTML = rows.map(c=>{
+    const dot = '<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:'+(wireColor[c.wire]||'#64748b')+';vertical-align:-1px;margin-right:6px;border:1px solid #64748b"></span>';
+    return '<tr><td>'+c.idx+'</td><td>Board '+c.board+'</td><td><b>'+(c.gpio===0?'0 (BOOT)':c.gpio)+'</b></td><td>'+c.device+'</td><td>'+c.pin+'</td><td>'+(c.wire==='-'?'—':dot+c.wire)+'</td><td><span class="badge b-'+c.type+'">'+c.type+'</span></td></tr>';
+  }).join('');
+  document.getElementById('connCount').textContent = 'Hiển thị ' + rows.length + '/' + connections.length + ' kết nối';
+}
+
+/* ═══ TAB 6 — CHECKLIST ═══ */
+const chkGroups = [
+  {t:'⚡ Nguồn', items:[
+    'Rail 5V đo được 5.0–5.2V khi đầy tải',
+    'GND chung toàn hệ thống (2 board + mọi linh kiện)',
+    'Tụ 470µF đúng cực (+ vào 5V, − vào GND)',
+    'Cáp USB #1 (cắt dây) cấp 5V cho Board 1 qua VIN, đo đúng 5V',
+    'Dây trắng/xanh lá của cả hai cáp đã cắt bỏ và bọc cách điện',
+    'Cáp USB #2 (cắt dây) cấp 5V cho amp MAX98357A, GND hai cáp nối chung']},
+  {t:'📟 Board 1 — Cảm biến', items:[
+    'DHT11 đọc được nhiệt độ/độ ẩm (không NaN)',
+    'MQ-2 đã làm nóng tối thiểu 120 giây và số đo hợp lệ',
+    'Cảm biến lửa phản hồi khi dùng phương pháp kiểm tra an toàn, không dùng ngọn lửa thật sát mô hình',
+    'Cảm biến mưa báo khi chấm nước lên tấm cảm ứng',
+    'LDR báo tối khi bị che, báo sáng khi chiếu đèn',
+    'HC-SR04 đo khoảng cách đúng (ECHO qua chia áp)']},
+  {t:'🦾 Board 1 — Chấp hành', items:[
+    'Servo cửa quay đúng góc, không giật',
+    'Servo phơi thu vào khi mưa, phơi ra khi tạnh',
+    'Relay đóng quạt đúng (kích mức LOW)',
+    'Còi kêu đúng ưu tiên: lửa > gas > khẩn cấp',
+    'Đèn (V8, mode 0–4) và quạt (V6) điều khiển được từ app',
+    'LED sân (V6) tự bật khi trời tối']},
+  {t:'📟 Board 1 — Hiển thị + nút', items:[
+    'LCD hiển thị đủ 2 dòng, chữ rõ',
+    'Nút khẩn cấp kích hoạt báo động khi nhấn']},
+  {t:'🎤 Board 2 — XiaoZhi AI', items:[
+    'Mic INMP441 thu được giọng nói',
+    'Amp + loa phát tiếng trả lời rõ ràng',
+    'TFT 1.8" hiển thị gương mặt AI',
+    'LED RGB WS2812 đổi màu theo trạng thái',
+    'Nút BOOT hoạt động (vào chế độ cấu hình)',
+    'Ra lệnh giọng nói điều khiển được Board 1 qua MCP']},
+  {t:'🌐 Chung', items:[
+    'Cả 2 board kết nối WiFi 2.4GHz ổn định',
+    'App Blynk điều khiển + giám sát được từ xa',
+    'Relay GPIO26 đóng/ngắt quạt 5 V DC đúng chiều COM/NO, không kêu tạch tạch liên tục',
+    'Chạy thử 24 giờ không lỗi, kiểm tra lại dây nối']}
+];
+function buildChk(){
+  const saved = safeReadJSON('ntm_chk', []);
+  let html = '', n = 0;
+  chkGroups.forEach(g=>{
+    html += '<div class="chk-group"><h4>'+g.t+'</h4>';
+    g.items.forEach(it=>{
+      const checked = saved[n] ? 'checked' : '';
+      html += '<label class="chk-item"><input type="checkbox" class="chk-cb" data-i="'+n+'" '+checked+' onchange="saveChk()"><span>'+it+'</span></label>';
+      n++;
+    });
+    html += '</div>';
+  });
+  document.getElementById('chkWrap').innerHTML = html;
+  updateChk();
+}
+function saveChk(){
+  const arr = [];
+  document.querySelectorAll('.chk-cb').forEach(c=>arr.push(c.checked));
+  safeSetItem('ntm_chk', JSON.stringify(arr));
+  updateChk();
+}
+function updateChk(){
+  const all = document.querySelectorAll('.chk-cb');
+  const done = document.querySelectorAll('.chk-cb:checked');
+  const pct = all.length ? Math.round(done.length/all.length*100) : 0;
+  document.getElementById('chkBar').style.width = pct + '%';
+  document.getElementById('chkLabel').textContent = 'Đã hoàn thành ' + done.length + '/' + all.length + ' mục (' + pct + '%)';
+}
+function resetChk(){
+  safeRemoveItem('ntm_chk');
+  document.querySelectorAll('.chk-cb').forEach(c=>c.checked=false);
+  updateChk();
+}
+
+/* ═══ TAB 5 — CHECKBOX BƯỚC ═══ */
+function loadSteps(){
+  const saved = safeReadJSON('ntm_steps', {});
+  document.querySelectorAll('.step-cb').forEach(c=>{
+    c.checked = !!saved[c.dataset.step];
+    c.addEventListener('change', ()=>{
+      saved[c.dataset.step] = c.checked;
+      safeSetItem('ntm_steps', JSON.stringify(saved));
+    });
+  });
+}
+
+/* ═══ TAB 7 — ACCORDION ═══ */
+function buildAcc(){
+  document.querySelectorAll('#accWrap .acc-item').forEach((item, index)=>{
+    const button = item.querySelector('.acc-head');
+    const body = item.querySelector('.acc-body');
+    if(button && body){
+      button.setAttribute('aria-expanded', item.classList.contains('open') ? 'true' : 'false');
+      button.setAttribute('type','button');
+      body.id = body.id || ('troubleBody' + (index + 1));
+      button.setAttribute('aria-controls', body.id);
+    }
+  });
+}
+function toggleAcc(btn){
+  const item = btn.parentElement;
+  item.classList.toggle('open');
+  btn.setAttribute('aria-expanded', item.classList.contains('open') ? 'true' : 'false');
+}
+
+/* ═══ KHỞI TẠO ═══ */
+applyTheme(safeGetItem('ntm_theme') || 'dark');
+renderConn();
+buildChk();
+loadSteps();
+buildAcc();
+</script>
+</body>
+</html>
